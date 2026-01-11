@@ -93,7 +93,7 @@ export default async function StockPage({ params, searchParams }: { params: Prom
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border border-black/50 dark:border-white/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Newspaper className="w-4 h-4" /> Recent Headlines
@@ -103,7 +103,7 @@ export default async function StockPage({ params, searchParams }: { params: Prom
               <ul className="space-y-4">
                 {stock.headlines && stock.headlines.length > 0 ? (
                   stock.headlines.slice(0, 4).map((news: string, i: number) => (
-                    <li key={i} className="text-sm border-l-2 border-transparent pl-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                    <li key={i} className="text-sm border-l-2 pl-4 py-3 hover:bg-secondary/50 transition-colors cursor-pointer border-l-primary/20 hover:border-l-primary rounded-r-md">
                       {news}
                     </li>
                   ))

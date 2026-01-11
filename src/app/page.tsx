@@ -1,45 +1,52 @@
-export const dynamic = "force-dynamic";
-import { prisma } from "@/lib/prisma";
-import { DashboardGrid } from "@/components/DashboardGrid";
-import { AddStockForm } from "@/components/AddStockForm";
-import { StockSearch } from "@/components/StockSearch";
-import { ModeToggle } from "@/components/mode-toggle";
 import { MarketIndices } from "@/components/MarketIndices";
+import { getDashboardData } from "@/lib/dashboard-data";
+import { DraggableDashboard } from "@/components/DraggableDashboard";
+import { DraggableWatchlist } from "@/components/DraggableWatchlist";
+import { prisma } from "@/lib/prisma";
+import { getMarketNews } from "@/lib/news";
 
-export default async function Home() {
-	console.log("🔍 PAGE LOAD: Attempting to fetch stocks...");
+export default async function DashboardPage() {
+  // 1. Fetch Watchlist (DB)
+  // 2. Fetch Widget Data (API)
+  const [stocks, dashboardData] = await Promise.all([
+    prisma.stock.findMany({
+      orderBy: { lastUpdated: 'desc' }
+    }),
+    getDashboardData()
+  ]);
 
-	const stocks = await prisma.stock.findMany({
-		orderBy: { symbol: "asc" },
-	});
+  return (
+    <main className="min-h-screen text-foreground p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+      {/* 1. Ticker Row */}
+      <MarketIndices />
 
-	console.log(`📊 PAGE LOAD: Found ${stocks.length} stocks from DB.`);
-	if (stocks.length > 0) {
-		console.log("first stock sample:", stocks[0]);
-	}
+      {/* 2. Main Watchlist (Sortable) */}
+      <div>
+        <div className="flex items-center justify-between mb-4 px-1">
+          <h2 className="text-lg font-semibold">Your Watchlist</h2>
+          <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded">Drag to Reorder</span>
+        </div>
+        
+        <div className="min-h-[200px]">
+          {stocks.length > 0 ? (
+            <DraggableWatchlist initialStocks={stocks} />
+          ) : (
+            <div className="p-8 text-center text-muted-foreground border border-dashed rounded-lg bg-secondary/20">
+              No stocks tracked. Use the search bar to start adding tickers.
+            </div>
+          )}
+        </div>
+      </div>
 
-	return (
-		<main className="min-h-screen pb-20">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				<MarketIndices />
-				
-				<div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-					<div>
-						<h2 className="text-3xl font-bold mb-2">Market Overview</h2>
-						<p className="text-muted-foreground">Real-time AI analysis of your watchlist.</p>
-					</div>
-					<AddStockForm />
-				</div>
+      {/* 3. The Draggable Bento Grid */}
+      <div className="pt-4">
+         <div className="flex items-center justify-between mb-4 px-1">
+           <h2 className="text-lg font-semibold">Market Overview</h2>
+           <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded">Drag to Reorder</span>
+         </div>
+         <DraggableDashboard serverData={dashboardData} />
+      </div>
 
-				{/* Visual Debugger: If this shows up, the data is missing */}
-				{stocks.length === 0 ? (
-					<div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
-						<strong>⚠️ Debug Info:</strong> Database returned 0 stocks.
-					</div>
-				) : (
-					<DashboardGrid stocks={stocks} />
-				)}
-			</div>
-		</main>
-	);
+    </main>
+  );
 }

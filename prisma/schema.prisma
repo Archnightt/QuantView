@@ -23,6 +23,7 @@ model Stock {
   narrative   String?
   lastUpdated DateTime @default(now())
   automated   Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
   snapshots   Snapshot[]
 }
 

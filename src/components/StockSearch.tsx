@@ -90,7 +90,7 @@ export function StockSearch() {
         className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground bg-secondary/50 border border-transparent rounded-lg hover:bg-secondary transition-all w-64"
       >
         <Search className="w-4 h-4" />
-        <span className="flex-1 text-left">Search ticker...</span>
+        <span className="flex-1 text-left">Search ticker... (Cmd + K)</span>
       </button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
