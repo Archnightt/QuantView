@@ -18,6 +18,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { SectorWidget, SentimentWidget } from "@/components/DashboardWidgets";
 import { NewsWidget } from "@/components/NewsWidget";
 import { MarketSummaryWidget } from "@/components/MarketSummaryWidget";
@@ -57,7 +58,7 @@ interface DashboardProps {
 }
 
 export function DraggableDashboard({ serverData }: DashboardProps) {
-  const [items, setItems] = useState([
+  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order", [
     "hero-chart",
     "market-summary",
     "sectors",
@@ -65,12 +66,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
     "news"
   ]);
 
-  const [isMounted, setIsMounted] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -137,10 +133,10 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
     setActiveId(null);
   };
 
-  if (!isMounted) {
+  if (!isLoaded) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((id) => (
+        {["hero-chart", "market-summary", "sectors", "sentiment", "news"].map((id) => (
           <div key={id} className={getItemClass(id)}>
             {renderWidget(id)}
           </div>

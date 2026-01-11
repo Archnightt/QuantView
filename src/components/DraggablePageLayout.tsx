@@ -19,6 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 // --- Sortable Section Wrapper ---
 function SortableSection({ id, title, children }: { id: string, title: string, children: React.ReactNode }) {
@@ -63,7 +64,7 @@ export function DraggablePageLayout({
   watchlist: React.ReactNode, 
   overview: React.ReactNode 
 }) {
-  const [items, setItems] = useState(["watchlist", "overview"]);
+  const [items, setItems, isLoaded] = useLocalStorage("layout-sections-order", ["watchlist", "overview"]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -94,6 +95,25 @@ export function DraggablePageLayout({
   };
 
   const getTitle = (id: string) => id === "watchlist" ? "Your Watchlist" : "Market Overview";
+
+  if (!isLoaded) {
+    return (
+      <div className="flex flex-col gap-4">
+         <div className="mb-10 bg-background rounded-xl p-2 md:p-4">
+            <div className="flex items-center justify-between mb-4 px-2">
+               <h2 className="text-xl font-semibold select-none">Your Watchlist</h2>
+            </div>
+            <div className="pl-1 md:pl-2">{watchlist}</div>
+         </div>
+         <div className="mb-10 bg-background rounded-xl p-2 md:p-4">
+            <div className="flex items-center justify-between mb-4 px-2">
+               <h2 className="text-xl font-semibold select-none">Market Overview</h2>
+            </div>
+            <div className="pl-1 md:pl-2">{overview}</div>
+         </div>
+      </div>
+    );
+  }
 
   return (
     <DndContext
