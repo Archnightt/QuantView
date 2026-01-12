@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -33,6 +33,7 @@ function getFallbackGradient(title: string) {
 
 const CATEGORIES = [
   { id: "US Markets", label: "Top Stories" },
+  { id: "Entertainment Industry", label: "Entertainment" },
   { id: "Technology Stocks", label: "Technology" },
   { id: "Artificial Intelligence Market", label: "AI & Chips" },
   { id: "Cryptocurrency News", label: "Crypto" },
@@ -46,15 +47,28 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
   const [loading, setLoading] = useState(false);
   const [currentCount, setCurrentCount] = useState(initialNews.length);
   const [activeCategory, setActiveCategory] = useState("US Markets");
+  
+  // Hero Autoplay State
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Cycle Hero
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % Math.min(5, news.length));
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [isPaused, news.length]);
 
   const changeCategory = async (catId: string) => {
     if (catId === activeCategory) return;
     setLoading(true);
     setActiveCategory(catId);
-    setNews([]); // Clear current list to show loading state
+    setHeroIndex(0); // Reset hero
+    setNews([]); 
     
     try {
-      // Reset count to 20 for new category
       const res = await fetch(`/api/news?count=20&category=${encodeURIComponent(catId)}`);
       const data = await res.json();
       setNews(data);
@@ -68,14 +82,10 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
 
   const loadMore = async () => {
     setLoading(true);
-    // Request 20 more than current
     const nextCount = currentCount + 20;
-    
     try {
       const res = await fetch(`/api/news?count=${nextCount}&category=${encodeURIComponent(activeCategory)}`);
       const newBatch = await res.json();
-      
-      // Filter out duplicates based on UUID just in case
       const existingIds = new Set(news.map(n => n.uuid));
       const uniqueNewStories = newBatch.filter((n: NewsItem) => !existingIds.has(n.uuid));
       
@@ -92,9 +102,11 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
 
   if (!news && !loading) return null;
 
-  const heroStory = news.length > 0 ? news[0] : null;
-  const otherStories = news.length > 0 ? news.slice(1) : [];
-  const heroImage = heroStory?.thumbnail?.resolutions?.[0]?.url;
+  // Split Data
+  const heroStories = news.slice(0, 5);
+  const gridStories = news.slice(5);
+  const currentHero = heroStories[heroIndex] || heroStories[0];
+  const heroImage = currentHero?.thumbnail?.resolutions?.[0]?.url;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -123,57 +135,73 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
          </div>
       )}
 
-      {/* 1. Hero Section */}
-      {heroStory && (
-        <Link href={heroStory.link} target="_blank" className="block group">
-          <div className="relative h-[400px] w-full rounded-2xl overflow-hidden border border-border shadow-2xl bg-card dark:bg-transparent">
-            {/* Background: Image OR Gradient Fallback */}
-            <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(heroStory.title) : 'bg-zinc-900'}`}>
-               {heroImage && (
-                 <Image 
-                   src={heroImage} 
-                   alt={heroStory.title}
-                   fill
-                   className="object-cover transition-transform duration-700 group-hover:scale-105"
-                   priority
-                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                 />
-               )}
-               {/* Overlay Gradient (always visible for text contrast) */}
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-               
-               {/* Icon Fallback if no image */}
-               {!heroImage && (
-                  <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                    <Newspaper className="w-32 h-32 text-white" />
-                  </div>
-               )}
+      {/* 1. Hero Section (Autoplay) */}
+      {currentHero && (
+        <div 
+          onMouseEnter={() => setIsPaused(true)} 
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <Link href={currentHero.link} target="_blank" className="block group relative">
+            <div className="relative h-[400px] w-full rounded-2xl overflow-hidden border border-border/50 shadow-2xl">
+              
+              {/* Progress Indicators */}
+              <div className="absolute top-6 right-6 flex gap-1.5 z-20">
+                {heroStories.map((_, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`h-1 rounded-full transition-all duration-500 shadow-sm backdrop-blur-sm ${
+                      idx === heroIndex ? "w-8 bg-white" : "w-2 bg-white/40"
+                    }`} 
+                  />
+                ))}
+              </div>
+
+              {/* Background */}
+              <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-zinc-900'}`}>
+                 {heroImage && (
+                   <Image 
+                     key={heroImage} // Force re-render for smooth fade
+                     src={heroImage} 
+                     alt={currentHero.title}
+                     fill
+                     className="object-cover transition-transform duration-700 group-hover:scale-105 animate-in fade-in zoom-in-50 duration-700"
+                     priority
+                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                   />
+                 )}
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                 {!heroImage && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                      <Newspaper className="w-32 h-32 text-white" />
+                    </div>
+                 )}
+              </div>
+              
+              {/* Content */}
+              <div className="absolute bottom-0 left-0 p-6 md:p-10 max-w-4xl z-10">
+                 <div className="flex items-center gap-3 mb-4">
+                   <span className="bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                     {currentHero.publisher}
+                   </span>
+                   <span className="text-white/80 text-sm flex items-center gap-1 font-medium bg-black/30 px-2 py-1 rounded-full backdrop-blur-md">
+                     <Clock className="w-3 h-3" /> {timeAgo(currentHero.providerPublishTime)}
+                   </span>
+                 </div>
+                 <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors drop-shadow-md">
+                   {currentHero.title}
+                 </h1>
+                 <p className="text-zinc-200 text-lg line-clamp-2 md:line-clamp-3 max-w-2xl drop-shadow-sm">
+                   {currentHero.summary}
+                 </p>
+              </div>
             </div>
-            
-            {/* Content */}
-            <div className="absolute bottom-0 left-0 p-6 md:p-10 max-w-4xl z-10">
-               <div className="flex items-center gap-3 mb-4">
-                 <span className="bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                   Top Story
-                 </span>
-                 <span className="text-white/80 text-sm flex items-center gap-1 font-medium bg-black/30 px-2 py-1 rounded-full backdrop-blur-md">
-                   <Clock className="w-3 h-3" /> {timeAgo(heroStory.providerPublishTime)}
-                 </span>
-               </div>
-               <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors drop-shadow-md">
-                 {heroStory.title}
-               </h1>
-               <p className="text-zinc-200 text-lg line-clamp-2 md:line-clamp-3 max-w-2xl drop-shadow-sm">
-                 {heroStory.summary}
-               </p>
-            </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       )}
 
       {/* 2. News Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {otherStories.map((story) => {
+        {gridStories.map((story) => {
           const imgUrl = story.thumbnail?.resolutions?.[0]?.url;
           
           return (

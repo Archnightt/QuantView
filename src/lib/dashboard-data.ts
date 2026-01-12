@@ -54,9 +54,25 @@ export async function getDashboardData() {
     // C. Other Promises
     const vixPromise = yf.quote(['^VIX']);
     const trendingPromise = yf.trendingSymbols('US').catch(() => ({ quotes: [] }));
-    const newsPromise = yf.search('Business News', { newsCount: 5, quotesCount: 0 })
-      .then(res => res.news || [])
-      .catch(() => []);
+    
+    // Fetch from multiple sources to guarantee volume
+    const newsPromise = Promise.all([
+      yf.search('Finance News', { newsCount: 10, quotesCount: 0 }),
+      yf.search('Stock Market', { newsCount: 10, quotesCount: 0 }),
+      yf.search('Economy', { newsCount: 10, quotesCount: 0 })
+    ])
+    .then(results => {
+      const allNews = results.flatMap(r => r.news || []);
+      // Deduplicate by UUID
+      const seen = new Set();
+      return allNews.filter(item => {
+        if (!item.uuid || seen.has(item.uuid)) return false;
+        seen.add(item.uuid);
+        return true;
+      });
+    })
+    .catch(() => []);
+
     const heroPromise = getStockHistory(heroSymbol);
 
     // 3. Resolve All
@@ -83,7 +99,7 @@ export async function getDashboardData() {
       currencies: rawSummary.filter((q: any) => MARKET_GROUPS.currencies.includes(q.symbol)),
     };
 
-    const formattedNews = news.map((item: any) => ({
+    const formattedNews = news.slice(0, 10).map((item: any) => ({
       uuid: item.uuid,
       title: item.title,
       publisher: item.publisher,
