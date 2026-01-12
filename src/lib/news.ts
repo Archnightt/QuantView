@@ -17,16 +17,25 @@ export async function getFullNewsFeed(count: number = 20, query: string = 'US Ma
     // @ts-ignore
     const yf = new yahooFinance();
     
-    console.log(`Fetching news for: ${query} (Count: ${count})`);
+    // Perform two parallel searches to ensure we get enough items (Yahoo often caps at 10 per query)
+    const [res1, res2] = await Promise.all([
+      yf.search(query, { newsCount: count, quotesCount: 0 }),
+      yf.search(query + ' economy stocks', { newsCount: count, quotesCount: 0 })
+    ]);
 
-    const result = await yf.search(query, { 
-      newsCount: count, 
-      quotesCount: 0 
+    const allNews = [...(res1.news || []), ...(res2.news || [])];
+    
+    if (allNews.length === 0) return [];
+
+    // Deduplicate by UUID
+    const seen = new Set();
+    const uniqueNews = allNews.filter(item => {
+      if (!item.uuid || seen.has(item.uuid)) return false;
+      seen.add(item.uuid);
+      return true;
     });
 
-    if (!result.news || result.news.length === 0) return [];
-
-    return result.news.map((item: any) => ({
+    return uniqueNews.slice(0, count).map((item: any) => ({
       uuid: item.uuid,
       title: item.title,
       publisher: item.publisher,

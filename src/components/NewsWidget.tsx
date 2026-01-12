@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Helper for "2h ago"
 function timeAgo(timestamp: number) {
@@ -50,7 +51,14 @@ export function NewsWidget({ news }: { news: any[] }) {
 			{/* 1. Background Image */}
 			<div className="absolute inset-0 z-0">
 				{imageUrl ? (
-					<img src={imageUrl} alt="News Background" className="w-full h-full object-cover opacity-60 transition-transform duration-[10s] ease-linear scale-100 group-hover:scale-110" />
+					<Image 
+            src={imageUrl} 
+            alt="News Background" 
+            fill
+            className="object-cover opacity-60 transition-transform duration-[10s] ease-linear scale-100 group-hover:scale-110"
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
 				) : (
 					<div className="w-full h-full bg-gradient-to-br from-zinc-800 to-black opacity-80" />
 				)}

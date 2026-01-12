@@ -33,7 +33,7 @@ function getFallbackGradient(title: string) {
 
 const CATEGORIES = [
   { id: "US Markets", label: "Top Stories" },
-  { id: "Entertainment Industry", label: "Entertainment" },
+  { id: "Entertainment", label: "Entertainment" },
   { id: "Technology Stocks", label: "Technology" },
   { id: "Artificial Intelligence Market", label: "AI & Chips" },
   { id: "Cryptocurrency News", label: "Crypto" },
@@ -47,6 +47,7 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
   const [loading, setLoading] = useState(false);
   const [currentCount, setCurrentCount] = useState(initialNews.length);
   const [activeCategory, setActiveCategory] = useState("US Markets");
+  const [noMoreNews, setNoMoreNews] = useState(false);
   
   // Hero Autoplay State
   const [heroIndex, setHeroIndex] = useState(0);
@@ -67,9 +68,12 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
     setActiveCategory(catId);
     setHeroIndex(0); // Reset hero
     setNews([]); 
+    setNoMoreNews(false);
     
     try {
-      const res = await fetch(`/api/news?count=20&category=${encodeURIComponent(catId)}`);
+      const res = await fetch(`/api/news?count=20&category=${encodeURIComponent(catId)}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
       setNews(data);
       setCurrentCount(20);
@@ -82,16 +86,26 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
 
   const loadMore = async () => {
     setLoading(true);
+    // Request 20 more than current
     const nextCount = currentCount + 20;
     try {
-      const res = await fetch(`/api/news?count=${nextCount}&category=${encodeURIComponent(activeCategory)}`);
+      const res = await fetch(`/api/news?count=${nextCount}&category=${encodeURIComponent(activeCategory)}`, {
+        cache: 'no-store'
+      });
       const newBatch = await res.json();
+      
+      if (newBatch.length <= news.length) {
+        setNoMoreNews(true);
+      }
+
       const existingIds = new Set(news.map(n => n.uuid));
       const uniqueNewStories = newBatch.filter((n: NewsItem) => !existingIds.has(n.uuid));
       
       if (uniqueNewStories.length > 0) {
         setNews(prev => [...prev, ...uniqueNewStories]);
         setCurrentCount(nextCount);
+      } else {
+        setNoMoreNews(true);
       }
     } catch (error) {
       console.error("Failed to load more news", error);
@@ -140,62 +154,73 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
         <div 
           onMouseEnter={() => setIsPaused(true)} 
           onMouseLeave={() => setIsPaused(false)}
+          className="relative h-[450px] w-full rounded-2xl overflow-hidden border border-border shadow-2xl bg-card dark:bg-transparent group"
         >
-          <Link href={currentHero.link} target="_blank" className="block group relative">
-            <div className="relative h-[400px] w-full rounded-2xl overflow-hidden border border-border/50 shadow-2xl">
-              
-              {/* Progress Indicators */}
-              <div className="absolute top-6 right-6 flex gap-1.5 z-20">
-                {heroStories.map((_, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`h-1 rounded-full transition-all duration-500 shadow-sm backdrop-blur-sm ${
-                      idx === heroIndex ? "w-8 bg-white" : "w-2 bg-white/40"
-                    }`} 
-                  />
-                ))}
-              </div>
-
-              {/* Background */}
-              <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-zinc-900'}`}>
-                 {heroImage && (
-                   <Image 
-                     key={heroImage} // Force re-render for smooth fade
-                     src={heroImage} 
-                     alt={currentHero.title}
-                     fill
-                     className="object-cover transition-transform duration-700 group-hover:scale-105 animate-in fade-in zoom-in-50 duration-700"
-                     priority
-                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                   />
-                 )}
-                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                 {!heroImage && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                      <Newspaper className="w-32 h-32 text-white" />
-                    </div>
-                 )}
-              </div>
-              
-              {/* Content */}
-              <div className="absolute bottom-0 left-0 p-6 md:p-10 max-w-4xl z-10">
-                 <div className="flex items-center gap-3 mb-4">
-                   <span className="bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                     {currentHero.publisher}
-                   </span>
-                   <span className="text-white/80 text-sm flex items-center gap-1 font-medium bg-black/30 px-2 py-1 rounded-full backdrop-blur-md">
-                     <Clock className="w-3 h-3" /> {timeAgo(currentHero.providerPublishTime)}
-                   </span>
-                 </div>
-                 <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors drop-shadow-md">
-                   {currentHero.title}
-                 </h1>
-                 <p className="text-zinc-200 text-lg line-clamp-2 md:line-clamp-3 max-w-2xl drop-shadow-sm">
-                   {currentHero.summary}
-                 </p>
-              </div>
+          {/* Main Clickable Area */}
+          <Link href={currentHero.link} target="_blank" className="block w-full h-full">
+            {/* Background */}
+            <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-zinc-900'}`}>
+               {heroImage && (
+                 <Image 
+                   key={heroImage} // Force re-render for smooth fade
+                   src={heroImage} 
+                   alt={currentHero.title}
+                   fill
+                   className="object-cover transition-transform duration-700 group-hover:scale-105 animate-in fade-in zoom-in-50 duration-700"
+                   priority
+                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                 />
+               )}
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+               {!heroImage && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                    <Newspaper className="w-32 h-32 text-white" />
+                  </div>
+               )}
+            </div>
+            
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 p-6 md:p-10 max-w-4xl z-10">
+               <div className="flex items-center gap-3 mb-4">
+                 <span className="bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                   {currentHero.publisher}
+                 </span>
+                 <span className="text-white/80 text-sm flex items-center gap-1 font-medium bg-black/30 px-2 py-1 rounded-full backdrop-blur-md">
+                   <Clock className="w-3 h-3" /> {timeAgo(currentHero.providerPublishTime)}
+                 </span>
+               </div>
+               <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors drop-shadow-md">
+                 {currentHero.title}
+               </h1>
+               <p className="text-zinc-200 text-lg line-clamp-2 md:line-clamp-3 max-w-2xl drop-shadow-sm">
+                 {currentHero.summary}
+               </p>
             </div>
           </Link>
+
+          {/* Progress Indicators - Positioned on top, outside of the Link */}
+          <div className="absolute top-6 right-6 flex gap-1 z-30">
+            {heroStories.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setHeroIndex(idx);
+                  setIsPaused(true);
+                }}
+                className="group/dot p-2 focus:outline-none" 
+                aria-label={`Go to story ${idx + 1}`}
+              >
+                <div 
+                  className={`h-1 rounded-full transition-all duration-300 shadow-sm backdrop-blur-md ${
+                    idx === heroIndex 
+                      ? "w-6 bg-white" 
+                      : "w-1.5 bg-white/40 group-hover/dot:bg-white/80 group-hover/dot:w-3"
+                  }`} 
+                />
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -257,21 +282,23 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
       </div>
 
       {/* 3. Load More Button */}
-      <div className="flex justify-center pt-8 pb-10">
-         <Button 
-           variant="outline" 
-           size="lg" 
-           onClick={loadMore} 
-           disabled={loading}
-           className="min-w-[200px] gap-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5"
-         >
-           {loading ? (
-             <><Loader2 className="w-4 h-4 animate-spin" /> Loading Stories...</>
-           ) : (
-             <><ChevronDown className="w-4 h-4" /> Load More News</>
-           )}
-         </Button>
-      </div>
+      {!noMoreNews && (
+        <div className="flex justify-center pt-8 pb-10">
+           <Button 
+             variant="outline" 
+             size="lg" 
+             onClick={loadMore} 
+             disabled={loading}
+             className="min-w-[200px] gap-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+           >
+             {loading ? (
+               <><Loader2 className="w-4 h-4 animate-spin" /> Loading Stories...</>
+             ) : (
+               <><ChevronDown className="w-4 h-4" /> Load More News</>
+             )}
+           </Button>
+        </div>
+      )}
       
     </div>
   );
