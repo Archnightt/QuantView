@@ -12,7 +12,7 @@ const MARKET_GROUPS = {
 export async function getDashboardData() {
   try {
     // @ts-ignore
-    const yf: any = new yahooFinance();
+    const yf = new yahooFinance();
     
     // 1. Fetch Featured Stock (Database)
     const featuredStock = await prisma.stock.findFirst({
@@ -61,9 +61,9 @@ export async function getDashboardData() {
     
     // Fetch from multiple sources to guarantee volume
     const newsPromise = Promise.all([
-      yf.search('Finance News', { newsCount: 10, quotesCount: 0 }),
-      yf.search('Stock Market', { newsCount: 10, quotesCount: 0 }),
-      yf.search('Economy', { newsCount: 10, quotesCount: 0 })
+      yf.search('^GSPC', { newsCount: 10, quotesCount: 0 }), // S&P 500
+      yf.search('^DJI', { newsCount: 10, quotesCount: 0 }),  // Dow Jones
+      yf.search('^IXIC', { newsCount: 10, quotesCount: 0 }), // Nasdaq
     ])
     .then(results => {
       const allNews = results.flatMap(r => r.news || []);

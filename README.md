@@ -1,4 +1,4 @@
-<h1>**AlphaDesk – GenAI Powered Market Dashboard**</h1>
+<h1>AlphaDesk – GenAI Powered Market Dashboard</h1>
 
 AlphaDesk is a modern, modular financial dashboard designed to provide retail investors with institutional-grade market overviews. It features a fully customizable drag-and-drop interface, real-time data visualization, and an intelligent news aggregation engine that bypasses standard API rate limits to deliver comprehensive market coverage.
 

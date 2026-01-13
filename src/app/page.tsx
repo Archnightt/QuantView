@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DraggableDashboard } from "@/components/DraggableDashboard";
 import { Button } from "@/components/ui/button";
