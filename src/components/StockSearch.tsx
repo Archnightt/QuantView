@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/command";
 import { useRouter } from "next/navigation";
 import { DialogTitle } from "@/components/ui/dialog"; // Fix accessibility error
+import { useToast } from "@/hooks/use-toast";
 
 // Define the shape of a search result
 interface SearchResult {
@@ -27,6 +28,7 @@ export function StockSearch() {
   const [results, setResults] = React.useState<SearchResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   // Toggle with Cmd+K
   React.useEffect(() => {
@@ -67,16 +69,31 @@ export function StockSearch() {
   const handleSelect = async (symbol: string) => {
     setLoading(true);
     try {
-      await fetch("/api/stocks", {
+      const res = await fetch("/api/stocks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ symbol }),
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to add stock");
+      }
+
       setOpen(false);
       setQuery("");
+      toast({
+        title: "Stock Added",
+        description: `Successfully added ${symbol} to your watchlist.`,
+      });
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to add stock", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Could not add stock. Please try again.",
+      });
     } finally {
       setLoading(false);
     }

@@ -54,7 +54,7 @@ export function MarketSummaryWidget({ data }: { data: any }) {
   );
 
   return (
-    <Card className="h-full flex flex-col bg-secondary/20 overflow-hidden">
+    <Card className="h-full flex flex-col dark:bg-secondary/20 overflow-hidden">
       {/* Status Bar */}
       <div className={`px-4 py-2 text-xs font-medium uppercase tracking-wider flex items-center justify-center gap-2 ${status.open ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800/50 text-zinc-400'}`}>
          {status.open ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}

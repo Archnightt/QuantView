@@ -46,9 +46,12 @@ export async function POST(request: Request) {
 		return NextResponse.json(stock);
 	} catch (error: any) {
 		if (error.code === "P2002") {
-			// Prisma unique constraint error
 			return NextResponse.json({ error: "Stock already in watchlist" }, { status: 409 });
 		}
+        // Handle Yahoo Finance "Not Found" or similar errors
+        if (error.message && (error.message.includes("Not Found") || error.message.includes("404"))) {
+             return NextResponse.json({ error: "Stock not found in market data" }, { status: 404 });
+        }
 		console.error("Error adding stock:", error);
 		return NextResponse.json({ error: "Failed to add stock" }, { status: 500 });
 	}
@@ -68,7 +71,11 @@ export async function DELETE(request: Request) {
 		});
 
 		return NextResponse.json({ success: true });
-	} catch (error) {
+	} catch (error: any) {
+        if (error.code === "P2025") {
+            // Record to delete does not exist. Treat as success.
+            return NextResponse.json({ success: true });
+        }
 		console.error("Error deleting stock:", error);
 		return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
 	}

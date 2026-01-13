@@ -12,7 +12,7 @@ const MARKET_GROUPS = {
 export async function getDashboardData() {
   try {
     // @ts-ignore
-    const yf = new yahooFinance();
+    const yf: any = new yahooFinance();
     
     // 1. Fetch Featured Stock (Database)
     const featuredStock = await prisma.stock.findFirst({
@@ -46,7 +46,7 @@ export async function getDashboardData() {
           period2: endDate, 
           interval: '1d' 
         })
-        .then(res => ({ symbol: sym, data: res.quotes.map((q: any) => q.close) }))
+        .then((res: any) => ({ symbol: sym, data: res.quotes.map((q: any) => q.close) }))
         .catch(() => ({ symbol: sym, data: [] }))
       )
     );
@@ -54,6 +54,10 @@ export async function getDashboardData() {
     // C. Other Promises
     const vixPromise = yf.quote(['^VIX']);
     const trendingPromise = yf.trendingSymbols('US').catch(() => ({ quotes: [] }));
+    
+    // Use screener as dailyGainers/dailyLosers are deprecated
+    const gainersPromise = yf.screener({ scrIds: 'day_gainers', count: 10 }).catch(() => ({ quotes: [] }));
+    const losersPromise = yf.screener({ scrIds: 'day_losers', count: 10 }).catch(() => ({ quotes: [] }));
     
     // Fetch from multiple sources to guarantee volume
     const newsPromise = Promise.all([
@@ -77,12 +81,14 @@ export async function getDashboardData() {
     const heroPromise = getStockHistory(heroSymbol, '1mo');
 
     // 3. Resolve All
-    const [sectors, rawSummary, sparklines, vix, trendingResult, news, heroHistory] = await Promise.all([
+    const [sectors, rawSummary, sparklines, vix, trendingResult, gainersResult, losersResult, news, heroHistory] = await Promise.all([
       sectorsPromise,
       summaryPromise,
       sparklinesPromise,
       vixPromise, 
       trendingPromise,
+      gainersPromise,
+      losersPromise,
       newsPromise,
       heroPromise
     ]);
@@ -111,12 +117,18 @@ export async function getDashboardData() {
     }));
 
     const trendingQuotes = trendingResult?.quotes?.slice(0, 5) || [];
+    // Ensure gainers/losers are arrays. Some versions return { quotes: [] }, others return [].
+    const gainers = (gainersResult as any)?.quotes || (Array.isArray(gainersResult) ? gainersResult : []);
+    const losers = (losersResult as any)?.quotes || (Array.isArray(losersResult) ? losersResult : []);
 
     return {
       sectors: enhancedSectors,
       marketSummary,
       vix: vix ? vix[0] : null,
       trending: trendingQuotes,
+      gainers: gainers.slice(0, 10),
+      losers: losers.slice(0, 10),
+      calendar: [], // Placeholder for Economic Calendar
       heroHistory: heroHistory || [],
       heroSymbol,
       heroName,
@@ -130,6 +142,9 @@ export async function getDashboardData() {
       marketSummary: { crypto: [], rates: [], commodities: [], currencies: [] },
       vix: null, 
       trending: [], 
+      gainers: [],
+      losers: [],
+      calendar: [],
       heroHistory: [], 
       heroSymbol: 'AAPL', 
       heroName: 'Apple Inc.',

@@ -22,6 +22,8 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { SectorWidget, SentimentWidget } from "@/components/DashboardWidgets";
 import { NewsWidget } from "@/components/NewsWidget";
 import { MarketSummaryWidget } from "@/components/MarketSummaryWidget";
+import { MoversWidget } from "@/components/MoversWidget";
+import { EconomicCalendarWidget } from "@/components/EconomicCalendarWidget";
 import { StockHistory } from "@/lib/history";
 import { HeroChart } from "@/components/HeroChart";
 
@@ -49,6 +51,9 @@ interface DashboardProps {
     sectors: any[];
     vix: any;
     trending: any[];
+    gainers: any[];
+    losers: any[];
+    calendar: any[];
     heroHistory: StockHistory[];
     heroSymbol: string;
     heroName: string;
@@ -58,9 +63,11 @@ interface DashboardProps {
 }
 
 export function DraggableDashboard({ serverData }: DashboardProps) {
-  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order", [
+  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v3", [
     "hero-chart",
     "market-summary",
+    "movers",
+    "economic-calendar",
     "sectors",
     "sentiment",
     "news"
@@ -91,6 +98,10 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
         return "col-span-1 min-h-[300px]";
       case "sentiment":
         return "col-span-1 min-h-[300px]";
+      case "movers":
+        return "col-span-1 min-h-[350px]";
+      case "economic-calendar":
+        return "col-span-1 min-h-[350px]";
       default:
         return "col-span-1";
     }
@@ -114,6 +125,10 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
         return <MarketSummaryWidget data={serverData.marketSummary || {}} />;
       case "news":
         return <NewsWidget news={serverData.news} />;
+      case "movers":
+        return <MoversWidget gainers={serverData.gainers} losers={serverData.losers} />;
+      case "economic-calendar":
+        return <EconomicCalendarWidget events={serverData.calendar} />;
       default:
         return null;
     }
@@ -135,7 +150,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
   if (!isLoaded) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {["hero-chart", "market-summary", "sectors", "sentiment", "news"].map((id) => (
+        {["hero-chart", "market-summary", "movers", "economic-calendar", "sectors", "sentiment", "news"].map((id) => (
           <div key={id} className={getItemClass(id)}>
             {renderWidget(id)}
           </div>

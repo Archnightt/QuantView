@@ -88,7 +88,7 @@ export function SectorWidget({ data }: { data: any[] }) {
   const prevPage = () => setPage((p) => (p - 1 + totalPages) % totalPages);
 
   return (
-    <Card className="h-full p-4 bg-secondary/20 flex flex-col">
+    <Card className="h-full p-4 dark:bg-secondary/20 flex flex-col">
       <div className="flex items-center justify-between mb-3">
          <div className="flex items-center gap-2 text-muted-foreground">
             <PieChart className="w-4 h-4" />
@@ -152,7 +152,7 @@ export function SentimentWidget({ vix }: { vix: any }) {
   const value = vix?.regularMarketPrice || 0;
   
   return (
-    <div className="h-full bg-secondary/20 rounded-xl overflow-hidden">
+    <div className="h-full bg-card dark:bg-secondary/20 rounded-xl overflow-hidden">
        <SentimentChart value={value} />
     </div>
   );
@@ -160,7 +160,7 @@ export function SentimentWidget({ vix }: { vix: any }) {
 
 export function TrendingWidget({ data }: { data: any[] }) {
   return (
-    <Card className="h-full p-4 bg-secondary/20">
+    <Card className="h-full p-4 dark:bg-secondary/20">
       <WidgetHeader title="Trending Now" icon={Zap} />
       <div className="space-y-3">
         {data.map((t: any) => (

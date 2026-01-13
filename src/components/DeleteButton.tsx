@@ -8,7 +8,10 @@ export function DeleteButton({ symbol }: { symbol: string }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 
-	const handleDelete = async () => {
+	const handleDelete = async (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!confirm(`Are you sure you want to remove ${symbol}?`)) return;
 		
 		setIsLoading(true);
