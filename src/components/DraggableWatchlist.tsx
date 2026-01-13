@@ -23,6 +23,20 @@ import { StockCard } from "@/components/StockCard";
 function SortableStockItem({ id, stock }: { id: string, stock: any }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   
+  // Track if we were recently dragging to suppress click events
+  const wasDraggingRef = React.useRef(false);
+
+  useEffect(() => {
+    if (isDragging) {
+      wasDraggingRef.current = true;
+    } else {
+      const timer = setTimeout(() => {
+        wasDraggingRef.current = false;
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isDragging]);
+  
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -32,7 +46,22 @@ function SortableStockItem({ id, stock }: { id: string, stock: any }) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="h-full">
-      <StockCard stock={stock} />
+      {/* 
+         Prevent interaction with the card content while dragging.
+         This prevents the click event from firing on the Link/Card after a drag operation finishes.
+      */}
+      <div 
+        className="h-full" 
+        style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+        onClickCapture={(e) => {
+          if (wasDraggingRef.current) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+      >
+        <StockCard stock={stock} />
+      </div>
     </div>
   );
 }
