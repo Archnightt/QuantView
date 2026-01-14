@@ -1,4 +1,5 @@
 import YahooFinance from "yahoo-finance2";
+import { getCurrencySymbol } from "@/lib/utils";
 
 // 1. Initialize the library instance
 const yf = new YahooFinance();
@@ -8,6 +9,7 @@ export interface MarketData {
 	name?: string;
 	price: number;
 	changePercent: number;
+	currency?: string;
 	headlines?: string[];
 }
 
@@ -38,6 +40,7 @@ export const MarketService = {
 				name: quote.longName || quote.shortName || symbol.toUpperCase(),
 				price: quote.regularMarketPrice || 0,
 				changePercent: quote.regularMarketChangePercent || 0,
+				currency: getCurrencySymbol(quote.currency),
 			};
 		} catch (error) {
 			console.error(`Failed to fetch quote for ${symbol}:`, error);

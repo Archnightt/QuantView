@@ -13,6 +13,7 @@ interface Stock {
   name: string;
   price: number;
   change: number;
+  currency?: string | null;
   narrative?: string | null;
   isFeatured?: boolean;
 }
@@ -21,6 +22,7 @@ export function StockCard({ stock }: { stock: Stock }) {
   const isPositive = stock.change > 0;
   const [isRefreshing, setIsRefreshing] = useState(false);
   const router = useRouter();
+  const currencySymbol = stock.currency || "$";
 
   const handlePin = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -61,7 +63,7 @@ export function StockCard({ stock }: { stock: Stock }) {
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold mb-4">${stock.price.toFixed(2)}</div>
+            <div className="text-3xl font-bold mb-4">{currencySymbol}{stock.price.toFixed(2)}</div>
             
             <div className="space-y-2">
               <div className="flex items-center justify-between w-full text-xs font-semibold text-muted-foreground uppercase tracking-wider">

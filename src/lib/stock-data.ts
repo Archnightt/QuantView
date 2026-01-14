@@ -1,4 +1,5 @@
 import yahooFinance from 'yahoo-finance2';
+import { getCurrencySymbol } from "@/lib/utils";
 
 export async function getStockDetails(symbol: string) {
   try {
@@ -22,6 +23,7 @@ export async function getStockDetails(symbol: string) {
     return {
       symbol,
       price: data.price?.regularMarketPrice?.raw || data.price?.regularMarketPrice || 0,
+      currency: getCurrencySymbol(data.price?.currency),
       summary: data.summaryDetail,
       // Map the financials to a clean object
       financials: {

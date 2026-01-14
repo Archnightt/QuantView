@@ -49,6 +49,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
       update: {
         price: data.price,
         change: data.changePercent,
+        currency: data.currency,
         narrative: narrative,
         lastUpdated: new Date(), // Update timestamp to show "freshness" of price
       },
@@ -57,6 +58,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
         name: data.name || data.symbol,
         price: data.price,
         change: data.changePercent,
+        currency: data.currency,
         narrative: narrative,
       },
     });

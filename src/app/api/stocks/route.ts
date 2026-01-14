@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import yahooFinance from "yahoo-finance2";
+import { getCurrencySymbol } from "@/lib/utils";
 
 export async function POST(request: Request) {
 	try {
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
 		let name = quote.longName || quote.shortName || upperSymbol;
 		const price = quote.regularMarketPrice || 0;
 		const change = quote.regularMarketChangePercent || 0;
+		const currency = getCurrencySymbol(quote.currency);
 
 		// 3. Create Stock in DB (Skip AI for now)
 		const stock = await prisma.stock.create({
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
 				name: name,
 				price: price,
 				change: change,
+				currency: currency,
 				// Set a placeholder so the UI knows it's new
 				narrative: "Analysis pending... Click refresh to generate.",
 				lastUpdated: new Date(),

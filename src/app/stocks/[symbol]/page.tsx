@@ -25,6 +25,7 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
   const isPositive = stockDetails.price > 0 && stockIngest.change > 0;
   const change = stockIngest.change;
   const price = stockDetails.price;
+  const currency = stockDetails.currency || "$";
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -42,7 +43,7 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
           <p className="text-xl text-muted-foreground">{stockIngest.name}</p>
         </div>
         <div className="text-right">
-          <div className="text-4xl font-mono font-bold">${price?.toFixed(2)}</div>
+          <div className="text-4xl font-mono font-bold">{currency}{price?.toFixed(2)}</div>
           <Badge variant={isPositive ? "default" : "destructive"} className={`text-lg px-3 py-1 mt-1 ${
             change > 0
               ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-300" 

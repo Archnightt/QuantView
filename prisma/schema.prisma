@@ -19,6 +19,7 @@ model Stock {
   name        String
   price       Float
   change      Float
+  currency    String?
   sector      String?
   narrative   String?
   lastUpdated DateTime @default(now())
