@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { AppSidebar } from "@/components/AppSidebar";
+import { Sidebar } from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -28,10 +28,10 @@ export default function RootLayout({
         >
           <div className="h-full relative flex min-h-screen bg-background">
              {/* Sidebar (Fixed on Desktop, Hidden on Mobile) */}
-             <AppSidebar />
+             <Sidebar />
              
              {/* Main Content Area - Shifted Right on Desktop */}
-             <main className="flex-1 md:pl-72 transition-all duration-300 ease-in-out">
+             <main className="flex-1 md:pl-32 transition-all duration-300 ease-in-out">
                {children}
              </main>
           </div>
