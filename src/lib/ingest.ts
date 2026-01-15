@@ -10,7 +10,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
 
   try {
     // 1. Fetch Real-Time Data (Price is always fresh)
-    const quoteData = await MarketService.getQuotes([upperSymbol]);
+    const quoteData = await MarketService.getQuotes([upperSymbol], forceUpdate);
     if (quoteData.length === 0) return null;
 
     const data = quoteData[0];
