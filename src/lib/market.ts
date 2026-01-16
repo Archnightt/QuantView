@@ -70,4 +70,31 @@ export const MarketService = {
 		const results = await Promise.all(promises);
 		return results.filter((r) => r !== null) as MarketData[];
 	},
+
+  /**
+   * Fetches DEEP financial context for AI generation.
+   * This retrieves heavy modules like Insider Transactions, Earnings, and Recommendations.
+   */
+  async getDeepMarketData(symbol: string, bypassCache = false) {
+    return fetchWithCache(`market:deep:${symbol.toUpperCase()}`, async () => {
+      try {
+        const queryOptions = {
+          modules: [
+            'financialData',          // Margins, Targets
+            'defaultKeyStatistics',   // P/E, Beta
+            'recommendationTrend',    // Analyst Ratings
+            'earnings',               // Earnings History
+            'insiderTransactions',    // Insider Buying/Selling
+            'upgradeDowngradeHistory' // Recent Analyst Actions
+          ]
+        };
+        // @ts-ignore
+        const result = await yf.quoteSummary(symbol, queryOptions);
+        return result;
+      } catch (error) {
+        console.error(`Failed to fetch deep data for ${symbol}:`, error);
+        return null;
+      }
+    }, 3600, { bypassCache }); // Cache for 1 Hour (Data changes slowly)
+  }
 };

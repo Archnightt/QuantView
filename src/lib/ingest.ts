@@ -33,12 +33,25 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
     // ONLY generate AI if it's stale OR empty OR forced
     if (isStale || hasNoNarrative || forceUpdate) {
       console.log(`🤖 AI Cache Expired or Forced for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h). Generating new...`);
-      narrative = await generateNarrative(
-        data.symbol, 
-        data.changePercent, 
-        data.price, 
-        data.headlines || []
-      );
+      const aiStart = performance.now();
+      
+      // FETCH DEEP CONTEXT (RAG)
+      const deepData = await MarketService.getDeepMarketData(upperSymbol);
+      
+      narrative = await generateNarrative({
+        symbol: data.symbol,
+        price: data.price,
+        change: data.changePercent,
+        headlines: data.headlines || [],
+        financials: deepData?.financialData,
+        statistics: deepData?.defaultKeyStatistics,
+        recommendations: deepData?.recommendationTrend,
+        insiders: deepData?.insiderTransactions,
+        earnings: deepData?.earnings
+      });
+
+      const aiEnd = performance.now();
+      console.log(`🧠 AI Generation took ${(aiEnd - aiStart).toFixed(2)}ms`);
     } else {
       console.log(`⚡ Using Cached Narrative for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h)`);
     }

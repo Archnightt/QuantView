@@ -12,11 +12,14 @@ export async function fetchWithCache<T>(
   options: { bypassCache?: boolean } = {}
 ): Promise<T> {
   const { bypassCache = false } = options;
+  const start = performance.now();
 
   if (!bypassCache) {
     try {
       const cached = await redis.get<T>(key)
       if (cached) {
+        const end = performance.now();
+        console.log(`[Redis] Cache HIT for ${key} - took ${(end - start).toFixed(2)}ms`);
         return cached
       }
     } catch (error: any) {
@@ -29,6 +32,8 @@ export async function fetchWithCache<T>(
   }
 
   const data = await fetcher()
+  const end = performance.now();
+  console.log(`[Redis] Cache MISS for ${key} - fetched in ${(end - start).toFixed(2)}ms`);
 
   try {
     // Only cache if data is returned
