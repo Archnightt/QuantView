@@ -10,6 +10,8 @@ import { DraggableWatchlist } from "@/components/DraggableWatchlist";
 import { MarketIndices } from "@/components/MarketIndices";
 import { DraggablePageLayout } from "@/components/DraggablePageLayout";
 import { prisma } from "@/lib/prisma";
+import { HeroChart } from "@/components/HeroChart";
+import { NewsWidget } from "@/components/NewsWidget";
 
 export default async function DashboardPage() {
   // 1. Fetch Watchlist (DB)
@@ -54,6 +56,20 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
+        }
+        pinnedChart={
+           <div className="h-[400px]">
+             <HeroChart 
+               symbol={dashboardData.heroSymbol} 
+               name={dashboardData.heroName}
+               initialData={dashboardData.heroHistory} 
+             />
+           </div>
+        }
+        newsFeed={
+           <div className="h-[400px]">
+             <NewsWidget news={dashboardData.news} />
+           </div>
         }
         overview={
           <DraggableDashboard serverData={dashboardData} />

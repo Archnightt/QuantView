@@ -16,7 +16,9 @@ const RANGES = [
   { label: "5Y", value: "5y" },
 ];
 
-export function HeroChart({ symbol, name, initialData }: { symbol: string, name?: string, initialData?: any[] }) {
+import { cn } from "@/lib/utils";
+
+export function HeroChart({ symbol, name, initialData, className }: { symbol: string, name?: string, initialData?: any[], className?: string }) {
   const [range, setRange] = useState("5d"); 
   
   const [data, setData] = useState<any[]>(() => {
@@ -86,7 +88,7 @@ export function HeroChart({ symbol, name, initialData }: { symbol: string, name?
   }, [symbol, range]);
 
   return (
-    <Card className="h-full border bg-card shadow-sm flex flex-col overflow-hidden">
+    <Card className={cn("h-full border bg-card shadow-sm flex flex-col overflow-hidden", className)}>
       <CardHeader className="flex flex-row items-center justify-between py-4 border-b border-border/50 shrink-0">
         <div className="space-y-1">
            <CardTitle className="text-xl flex items-center gap-2">
@@ -116,7 +118,7 @@ export function HeroChart({ symbol, name, initialData }: { symbol: string, name?
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 relative min-h-[400px]">
+      <CardContent className="flex-1 relative">
         {loading && data.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center bg-card/50 z-10 backdrop-blur-sm">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -137,7 +139,7 @@ export function HeroChart({ symbol, name, initialData }: { symbol: string, name?
                  </defs>
                  <XAxis dataKey="time" hide={true} interval="preserveStartEnd" />
                  <YAxis 
-                   domain={['auto', 'auto']} 
+                   domain={['dataMin', 'dataMax']} 
                    orientation="right" 
                    tick={{ fontSize: 11, fill: '#888' }}
                    tickFormatter={(val) => val.toFixed(2)}
@@ -164,6 +166,7 @@ export function HeroChart({ symbol, name, initialData }: { symbol: string, name?
                    strokeWidth={2}
                    fill="url(#fillGradient)" 
                    animationDuration={800}
+                   baseValue="dataMin"
                  />
                </AreaChart>
              </ResponsiveContainer>

@@ -63,14 +63,12 @@ interface DashboardProps {
 }
 
 export function DraggableDashboard({ serverData }: DashboardProps) {
-  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v3", [
-    "hero-chart",
+  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v4", [
     "market-summary",
     "movers",
     "economic-calendar",
     "sectors",
-    "sentiment",
-    "news"
+    "sentiment"
   ]);
 
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -88,10 +86,6 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
   const getItemClass = (id: string) => {
     switch (id) {
-      case "hero-chart":
-        return "col-span-1 md:col-span-2 lg:col-span-3 min-h-[350px]";
-      case "news":
-        return "col-span-1 md:col-span-2 lg:col-span-3 min-h-[400px]";
       case "sectors":
         return "col-span-1 min-h-[300px]";
       case "market-summary":
@@ -109,13 +103,6 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
   const renderWidget = (id: string) => {
     switch (id) {
-      case "hero-chart":
-        return (
-          <HeroChart 
-            symbol={serverData.heroSymbol} 
-            name={serverData.heroName} 
-          />
-        );
       case "sectors":
         return <SectorWidget data={serverData.sectors} />;
       case "sentiment":
@@ -123,8 +110,6 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       case "market-summary":
       case "trending":
         return <MarketSummaryWidget data={serverData.marketSummary || {}} />;
-      case "news":
-        return <NewsWidget news={serverData.news} />;
       case "movers":
         return <MoversWidget gainers={serverData.gainers} losers={serverData.losers} />;
       case "economic-calendar":
@@ -150,7 +135,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
   if (!isLoaded) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {["hero-chart", "market-summary", "movers", "economic-calendar", "sectors", "sentiment", "news"].map((id) => (
+        {["market-summary", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
           <div key={id} className={getItemClass(id)}>
             {renderWidget(id)}
           </div>

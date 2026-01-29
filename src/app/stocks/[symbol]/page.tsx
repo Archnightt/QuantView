@@ -70,9 +70,13 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
       </div>
 
       {/* 1. Main Chart (Full Width) */}
-      <div className="w-full min-h-[500px]">
+      <div className="w-full h-[400px]">
         {/* The component now handles its own Card, Title, and Range Buttons */}
-        <HeroChart symbol={symbol} name={stockIngest.name} initialData={stockHistory} /> 
+        <HeroChart 
+          symbol={symbol} 
+          name={stockIngest.name} 
+          initialData={stockHistory} 
+        /> 
       </div>
 
       {/* 2. Middle Row: Financials + AI */}

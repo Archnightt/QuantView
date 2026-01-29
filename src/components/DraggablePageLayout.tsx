@@ -48,7 +48,7 @@ function SortableSection({ id, title, children }: { id: string, title: string, c
          </span>
       </div>
       
-      {/* The Content (Watchlist or Dashboard) */}
+      {/* The Content */}
       <div className="pl-1 md:pl-2">
         {children}
       </div>
@@ -59,12 +59,22 @@ function SortableSection({ id, title, children }: { id: string, title: string, c
 // --- Main Layout Component ---
 export function DraggablePageLayout({ 
   watchlist, 
-  overview 
+  overview,
+  pinnedChart,
+  newsFeed
 }: { 
   watchlist: React.ReactNode, 
-  overview: React.ReactNode 
+  overview: React.ReactNode,
+  pinnedChart: React.ReactNode,
+  newsFeed: React.ReactNode
 }) {
-  const [items, setItems, isLoaded] = useLocalStorage("layout-sections-order", ["watchlist", "overview"]);
+  // Updated version to v2 to reset layout with new sections
+  const [items, setItems, isLoaded] = useLocalStorage("layout-sections-order-v2", [
+    "pinnedChart", 
+    "watchlist", 
+    "overview",
+    "newsFeed"
+  ]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -91,26 +101,32 @@ export function DraggablePageLayout({
   const renderSection = (id: string) => {
     if (id === "watchlist") return watchlist;
     if (id === "overview") return overview;
+    if (id === "pinnedChart") return pinnedChart;
+    if (id === "newsFeed") return newsFeed;
     return null;
   };
 
-  const getTitle = (id: string) => id === "watchlist" ? "Your Watchlist" : "Market Overview";
+  const getTitle = (id: string) => {
+    switch (id) {
+      case "watchlist": return "Your Watchlist";
+      case "overview": return "Market Overview";
+      case "pinnedChart": return "Pinned Chart";
+      case "newsFeed": return "Latest News";
+      default: return "Section";
+    }
+  };
 
   if (!isLoaded) {
     return (
       <div className="flex flex-col gap-4">
-         <div className="mb-10 bg-background rounded-xl p-2 md:p-4">
-            <div className="flex items-center justify-between mb-4 px-2">
-               <h2 className="text-xl font-semibold select-none">Your Watchlist</h2>
+         {["pinnedChart", "watchlist", "overview", "newsFeed"].map(id => (
+            <div key={id} className="mb-10 bg-background rounded-xl p-2 md:p-4">
+              <div className="flex items-center justify-between mb-4 px-2">
+                <h2 className="text-xl font-semibold select-none">{getTitle(id)}</h2>
+              </div>
+              <div className="pl-1 md:pl-2">{renderSection(id)}</div>
             </div>
-            <div className="pl-1 md:pl-2">{watchlist}</div>
-         </div>
-         <div className="mb-10 bg-background rounded-xl p-2 md:p-4">
-            <div className="flex items-center justify-between mb-4 px-2">
-               <h2 className="text-xl font-semibold select-none">Market Overview</h2>
-            </div>
-            <div className="pl-1 md:pl-2">{overview}</div>
-         </div>
+         ))}
       </div>
     );
   }

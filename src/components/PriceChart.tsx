@@ -76,7 +76,7 @@ export function PriceChart({ data, range = '1mo' }: { data: any[], range?: strin
           />
           <Area
             dataKey="price"
-            type="natural"
+            type="monotone"
             fill="url(#fillPrice)"
             stroke="var(--color-price)"
             strokeWidth={2}
