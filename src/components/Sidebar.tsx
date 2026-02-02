@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import Image from "next/image";
+import { useSidebar } from "@/components/SidebarProvider";
 
 const routes = [
   {
@@ -88,7 +89,7 @@ const MobileSidebarContent = ({ pathname, onClose }: MobileSidebarContentProps) 
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { isExpanded, toggleSidebar } = useSidebar();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
@@ -146,7 +147,7 @@ export function Sidebar() {
 					<Button
 						variant="ghost"
 						size="icon"
-						onClick={() => setIsExpanded(!isExpanded)}
+						onClick={toggleSidebar}
 						className="w-full h-12 rounded-2xl hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center justify-center">
 						{isExpanded ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
 					</Button>

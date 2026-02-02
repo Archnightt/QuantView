@@ -51,7 +51,7 @@ export function NewsWidget({ news }: { news: any[] }) {
 						src={imageUrl}
 						alt="News Background"
 						fill
-						className="object-cover opacity-90 transition-transform duration-[10000ms] ease-linear scale-100 group-hover:scale-110"
+						className="object-cover transition-transform duration-[10000ms] ease-linear scale-100 group-hover:scale-110"
 						priority
 						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					/>

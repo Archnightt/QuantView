@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
+import { SidebarProvider } from "@/components/SidebarProvider";
+import { MainContentWrapper } from "@/components/MainContentWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,15 +28,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="h-full relative flex min-h-screen bg-background">
-             {/* Sidebar (Fixed on Desktop, Hidden on Mobile) */}
-             <Sidebar />
-             
-             {/* Main Content Area - Shifted Right on Desktop */}
-             <main className="flex-1 md:pl-32 transition-all duration-300 ease-in-out">
-               {children}
-             </main>
-          </div>
+          <SidebarProvider>
+            <div className="h-full relative flex min-h-screen bg-background">
+               {/* Sidebar (Fixed on Desktop, Hidden on Mobile) */}
+               <Sidebar />
+               
+               {/* Main Content Area - Shifted Right on Desktop */}
+               <MainContentWrapper>
+                 {children}
+               </MainContentWrapper>
+            </div>
+          </SidebarProvider>
           <Toaster />
         </ThemeProvider>
       </body>

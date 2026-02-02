@@ -138,7 +138,7 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
               <div className="flex items-center justify-between w-full text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${stock.narrative && stock.narrative !== "Analyst unavailable." ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
-                  Analyst Narrative
+                  AI Narrative
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
