@@ -154,27 +154,28 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
         <div 
           onMouseEnter={() => setIsPaused(true)} 
           onMouseLeave={() => setIsPaused(false)}
-          className="relative h-[450px] w-full rounded-2xl overflow-hidden border border-border shadow-2xl bg-card dark:bg-transparent group"
+          className="relative h-[450px] w-full rounded-2xl overflow-hidden border border-border shadow-xl bg-card dark:bg-zinc-950 group"
         >
           {/* Main Clickable Area */}
           <Link href={currentHero.link} target="_blank" className="block w-full h-full">
             {/* Background */}
-            <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-zinc-900'}`}>
+            <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-neutral-100 dark:bg-zinc-900'}`}>
                {heroImage && (
                  <Image 
                    key={heroImage} // Force re-render for smooth fade
                    src={heroImage} 
                    alt={currentHero.title}
                    fill
-                   className="object-cover transition-transform duration-700 group-hover:scale-105 animate-in fade-in zoom-in-50 duration-700"
+                   className="object-cover opacity-90 dark:opacity-80 transition-transform duration-700 group-hover:scale-105 animate-in fade-in zoom-in-50 duration-700"
                    priority
                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                  />
                )}
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+               {/* Vignette overlay - darker in both modes for text legibility */}
+               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                {!heroImage && (
                   <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                    <Newspaper className="w-32 h-32 text-white" />
+                    <Newspaper className="w-32 h-32 text-foreground" />
                   </div>
                )}
             </div>
@@ -182,23 +183,23 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
             {/* Content */}
             <div className="absolute bottom-0 left-0 p-6 md:p-10 max-w-4xl z-10">
                <div className="flex items-center gap-3 mb-4">
-                 <span className="bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                 <span className="bg-primary backdrop-blur-sm text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                    {currentHero.publisher}
                  </span>
-                 <span className="text-white/80 text-sm flex items-center gap-1 font-medium bg-black/30 px-2 py-1 rounded-full backdrop-blur-md">
+                 <span className="text-white/90 text-sm flex items-center gap-1 font-medium bg-black/40 px-2 py-1 rounded-full backdrop-blur-md">
                    <Clock className="w-3 h-3" /> {timeAgo(currentHero.providerPublishTime)}
                  </span>
                </div>
-               <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors drop-shadow-md">
+               <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors">
                  {currentHero.title}
                </h1>
-               <p className="text-zinc-200 text-lg line-clamp-2 md:line-clamp-3 max-w-2xl drop-shadow-sm">
+               <p className="text-zinc-200 text-lg line-clamp-2 md:line-clamp-3 max-w-2xl">
                  {currentHero.summary}
                </p>
             </div>
           </Link>
 
-          {/* Progress Indicators - Positioned on top, outside of the Link */}
+          {/* Progress Indicators */}
           <div className="absolute top-6 right-6 flex gap-1 z-30">
             {heroStories.map((_, idx) => (
               <button
@@ -231,10 +232,10 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
           
           return (
             <Link href={story.link} key={story.uuid} target="_blank" className="group h-full block">
-              <Card className="h-full border bg-card dark:bg-secondary/10 hover:shadow-md dark:hover:bg-secondary/20 transition-all duration-300 overflow-hidden flex flex-col shadow-sm">
+              <Card className="h-full border border-border bg-card hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col shadow-sm">
                 
                 {/* Card Image Area */}
-                <div className={`h-48 relative overflow-hidden ${!imgUrl ? getFallbackGradient(story.title) : 'bg-zinc-800'}`}>
+                <div className={`h-48 relative overflow-hidden ${!imgUrl ? getFallbackGradient(story.title) : 'bg-muted'}`}>
                   {imgUrl ? (
                     <Image 
                       src={imgUrl} 
@@ -245,11 +246,10 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full opacity-20">
-                      <Newspaper className="w-12 h-12 text-white" />
+                      <Newspaper className="w-12 h-12 text-foreground" />
                     </div>
                   )}
-                  {/* Subtle overlay on images too */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-40" />
                 </div>
                 
                 {/* Card Content */}

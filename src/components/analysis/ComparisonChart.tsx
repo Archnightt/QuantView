@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import {
   LineChart,
   Line,
@@ -22,9 +23,12 @@ export default function ComparisonChart({
   tickerA,
   tickerB,
 }: ComparisonChartProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
   if (!data || data.length === 0) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/50 text-neutral-400">
+      <div className="flex h-[400px] w-full items-center justify-center rounded-xl border border-border bg-card/50 text-muted-foreground">
         No chart data available
       </div>
     );
@@ -33,20 +37,20 @@ export default function ComparisonChart({
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3 shadow-xl">
-          <p className="mb-2 text-sm font-medium text-neutral-300">{label}</p>
+        <div className="rounded-lg border border-border bg-popover p-3 shadow-xl">
+          <p className="mb-2 text-sm font-medium text-popover-foreground">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <span
                 className="h-2 w-2 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
-              <span className="font-semibold text-neutral-200">
+              <span className="font-semibold text-popover-foreground">
                 {entry.name}:
               </span>
               <span
                 className={`${
-                  entry.value >= 0 ? "text-emerald-400" : "text-rose-400"
+                  entry.value >= 0 ? "text-emerald-500" : "text-rose-500"
                 }`}
               >
                 {entry.value.toFixed(2)}%
@@ -60,8 +64,8 @@ export default function ComparisonChart({
   };
 
   return (
-    <div className="h-[400px] w-full rounded-xl border border-neutral-800 bg-neutral-900/50 p-4">
-      <h3 className="mb-4 text-lg font-semibold text-neutral-200">
+    <div className="h-[400px] w-full rounded-xl border border-border bg-card p-4">
+      <h3 className="mb-4 text-lg font-semibold text-foreground">
         Performance Comparison (1 Month)
       </h3>
       <div className="h-[340px] w-full">
@@ -72,12 +76,12 @@ export default function ComparisonChart({
           >
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#262626"
+              stroke={isDark ? "#262626" : "#e5e5e5"}
               vertical={false}
             />
             <XAxis
               dataKey="date"
-              stroke="#525252"
+              stroke={isDark ? "#525252" : "#a3a3a3"}
               fontSize={12}
               tickLine={false}
               axisLine={false}
@@ -88,7 +92,7 @@ export default function ComparisonChart({
               minTickGap={30}
             />
             <YAxis
-              stroke="#525252"
+              stroke={isDark ? "#525252" : "#a3a3a3"}
               fontSize={12}
               tickLine={false}
               axisLine={false}

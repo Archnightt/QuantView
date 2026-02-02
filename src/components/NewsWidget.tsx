@@ -43,7 +43,7 @@ export function NewsWidget({ news }: { news: any[] }) {
   const prevStory = () => setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
 
   return (
-		<Card className="group relative h-full w-full overflow-hidden dark:bg-zinc-900 flex flex-col justify-end" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
+		<Card className="group relative h-full w-full overflow-hidden flex flex-col justify-end border-border bg-neutral-950" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
 			{/* 1. Background Image */}
 			<div className="absolute inset-0 z-0">
 				{imageUrl ? (
@@ -51,7 +51,7 @@ export function NewsWidget({ news }: { news: any[] }) {
 						src={imageUrl}
 						alt="News Background"
 						fill
-						className="object-cover opacity-60 transition-transform duration-&lsqb;10000ms&rsqb; ease-linear scale-100 group-hover:scale-110"
+						className="object-cover opacity-90 transition-transform duration-[10000ms] ease-linear scale-100 group-hover:scale-110"
 						priority
 						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					/>
@@ -59,7 +59,7 @@ export function NewsWidget({ news }: { news: any[] }) {
 					<div className="w-full h-full bg-gradient-to-br from-zinc-800 to-black opacity-80" />
 				)}
 				{/* Vignette Gradient (Darkens the bottom for text) */}
-				<div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black via-black/80 to-transparent" />
+				<div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 			</div>
 
 			{/* 2. Progress Bar */}
@@ -70,7 +70,7 @@ export function NewsWidget({ news }: { news: any[] }) {
 				{/* Metadata Row */}
 				<div className="flex items-center justify-between">
 					<span className="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded uppercase tracking-wider">{story.publisher}</span>
-					<span className="text-xs text-zinc-400 flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-md">
+					<span className="text-xs text-zinc-300 flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-md">
 						<Clock className="w-3 h-3" />
 						{timeAgo(story.providerPublishTime)}
 					</span>
@@ -82,11 +82,11 @@ export function NewsWidget({ news }: { news: any[] }) {
 				</Link>
 
 				{/* The Insight / Summary */}
-				{story.summary && <p className="text-sm text-zinc-300 line-clamp-2 leading-relaxed opacity-90">{story.summary}</p>}
+				{story.summary && <p className="text-sm text-zinc-200 line-clamp-2 leading-relaxed opacity-90">{story.summary}</p>}
 
 				{/* Navigation Controls (Bottom Right) */}
 				<div className="flex items-center justify-between mt-2 pt-3 border-t border-white/10">
-					<span className="text-[10px] text-zinc-500 tabular-nums">
+					<span className="text-[10px] text-zinc-400 tabular-nums">
 						{currentIndex + 1} / {news.length}
 					</span>
 					<div className="flex gap-2">

@@ -44,39 +44,39 @@ export default function AnalysisPage() {
   return (
     <div className="flex flex-col gap-6 p-6 md:p-8 max-w-7xl mx-auto">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-100">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Stock Comparison
         </h1>
-        <p className="text-neutral-400">
+        <p className="text-muted-foreground">
           Analyze performance and fundamentals side-by-side.
         </p>
       </div>
 
       {/* Top Section: Inputs */}
-      <Card className="border-neutral-800 bg-neutral-900/50">
+      <Card className="border-border bg-card">
         <CardContent className="p-6">
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="grid w-full gap-2">
-              <label className="text-sm font-medium text-neutral-300">Stock A</label>
+              <label className="text-sm font-medium text-muted-foreground">Stock A</label>
               <Input
                 value={tickerA}
                 onChange={(e) => setTickerA(e.target.value.toUpperCase())}
                 placeholder="e.g. AAPL"
-                className="bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-600 uppercase"
+                className="bg-background border-input text-foreground placeholder:text-muted-foreground uppercase"
               />
             </div>
             
             <div className="hidden md:flex items-center justify-center pb-3 px-2">
-              <span className="text-neutral-500 font-bold">VS</span>
+              <span className="text-muted-foreground font-bold">VS</span>
             </div>
 
             <div className="grid w-full gap-2">
-              <label className="text-sm font-medium text-neutral-300">Stock B</label>
+              <label className="text-sm font-medium text-muted-foreground">Stock B</label>
               <Input
                 value={tickerB}
                 onChange={(e) => setTickerB(e.target.value.toUpperCase())}
                 placeholder="e.g. MSFT"
-                className="bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-600 uppercase"
+                className="bg-background border-input text-foreground placeholder:text-muted-foreground uppercase"
               />
             </div>
 
@@ -103,36 +103,36 @@ export default function AnalysisPage() {
 
       {/* Bottom Section: Head-to-Head Table */}
       {data && (
-        <Card className="border-neutral-800 bg-neutral-900/50">
+        <Card className="border-border bg-card">
           <CardHeader>
-            <CardTitle className="text-neutral-200">Head-to-Head Fundamentals</CardTitle>
+            <CardTitle className="text-foreground">Head-to-Head Fundamentals</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="relative overflow-x-auto rounded-md border border-neutral-800">
+            <div className="relative overflow-x-auto rounded-md border border-border">
               <table className="w-full text-sm text-center">
-                <thead className="text-xs uppercase bg-neutral-950 text-neutral-400">
+                <thead className="text-xs uppercase bg-muted text-muted-foreground">
                   <tr>
-                    <th className="px-6 py-4 w-1/3 text-right border-b border-neutral-800">
+                    <th className="px-6 py-4 w-1/3 text-right border-b border-border">
                       {data.stockA.symbol}
                     </th>
-                    <th className="px-6 py-4 w-1/3 text-center border-b border-neutral-800 font-bold text-neutral-200">
+                    <th className="px-6 py-4 w-1/3 text-center border-b border-border font-bold text-foreground">
                       Metric
                     </th>
-                    <th className="px-6 py-4 w-1/3 text-left border-b border-neutral-800">
+                    <th className="px-6 py-4 w-1/3 text-left border-b border-border">
                       {data.stockB.symbol}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-800">
+                <tbody className="divide-y divide-border">
                   {data.metrics.map((row) => (
-                    <tr key={row.metric} className="bg-neutral-900/30 hover:bg-neutral-900/60 transition-colors">
-                      <td className="px-6 py-4 text-right font-medium text-neutral-300">
+                    <tr key={row.metric} className="bg-card hover:bg-muted/50 transition-colors">
+                      <td className="px-6 py-4 text-right font-medium text-foreground">
                         {row.stockA}
                       </td>
-                      <td className="px-6 py-4 text-center text-neutral-500 font-medium text-xs uppercase tracking-wider">
+                      <td className="px-6 py-4 text-center text-muted-foreground font-medium text-xs uppercase tracking-wider">
                         {row.metric}
                       </td>
-                      <td className="px-6 py-4 text-left font-medium text-neutral-300">
+                      <td className="px-6 py-4 text-left font-medium text-foreground">
                         {row.stockB}
                       </td>
                     </tr>
