@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import Image from "next/image";
 import { useSidebar } from "@/components/SidebarProvider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { BoostPanel } from "@/components/BoostPanel";
 
 const routes = [
   {
@@ -39,13 +41,6 @@ const routes = [
     href: "/analysis",
     color: "text-pink-500",
     bgColor: "bg-pink-500/10",
-  },
-  {
-    label: "Settings",
-    icon: Settings,
-    href: "/settings",
-    color: "text-gray-400",
-    bgColor: "bg-gray-400/10",
   },
 ];
 
@@ -139,6 +134,30 @@ export function Sidebar() {
 							</Link>
 						);
 					})}
+
+                    {/* Settings / Boost Trigger */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                            className={cn(
+                                "group flex items-center h-14 rounded-2xl transition-all duration-300 overflow-hidden w-full text-left",
+                                "hover:bg-neutral-100 dark:hover:bg-white/5",
+                                "text-neutral-500 dark:text-neutral-400"
+                            )}>
+                            <div className="w-16 shrink-0 flex items-center justify-center">
+                                <Settings className="h-6 w-6 transition-colors group-hover:text-neutral-900 dark:group-hover:text-white" />
+                            </div>
+                            <div className={cn("overflow-hidden transition-all duration-300 whitespace-nowrap", isExpanded ? "opacity-100 ml-4 w-auto" : "opacity-0 w-0")}>
+                                <span className="text-sm font-semibold group-hover:text-neutral-900 dark:group-hover:text-white">Customize</span>
+                            </div>
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent side="right" align="start" className="w-auto p-0 border-none bg-transparent shadow-none ml-4">
+                         <div className="rounded-3xl border border-white/20 bg-white/80 dark:bg-black/60 backdrop-blur-xl shadow-2xl p-5">
+                            <BoostPanel />
+                         </div>
+                      </PopoverContent>
+                    </Popover>
 				</div>
 
 				{/* Bottom Section: Toggle */}

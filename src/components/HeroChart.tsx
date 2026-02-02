@@ -133,8 +133,8 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
                <AreaChart data={data}>
                  <defs>
                    <linearGradient id="fillGradient" x1="0" y1="0" x2="0" y2="1">
-                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                     <stop offset="5%" stopColor="hsl(var(--chart-main))" stopOpacity={0.2} />
+                     <stop offset="95%" stopColor="hsl(var(--chart-main))" stopOpacity={0} />
                    </linearGradient>
                  </defs>
                  <XAxis dataKey="time" hide={true} interval="preserveStartEnd" />
@@ -162,7 +162,7 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
                  <Area 
                    type="monotone" 
                    dataKey="price" 
-                   stroke="hsl(var(--primary))" 
+                   stroke="hsl(var(--chart-main))" 
                    strokeWidth={2}
                    fill="url(#fillGradient)" 
                    animationDuration={800}

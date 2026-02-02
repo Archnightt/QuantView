@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DraggableDashboard } from "@/components/DraggableDashboard";
-import { ModeToggle } from "@/components/mode-toggle";
 import { StockSearch } from "@/components/StockSearch";
 import { DraggableWatchlist } from "@/components/DraggableWatchlist";
 import { MarketIndices } from "@/components/MarketIndices";
@@ -24,19 +23,14 @@ export default async function DashboardPage() {
       
       {/* Header Area */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-        <div className="w-full md:w-1/4">
+        <div className="w-full md:w-1/2">
            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
            <p className="text-muted-foreground">Market overview</p>
         </div>
         
-        {/* Centered Search */}
-        <div className="w-full md:w-1/2 flex justify-center z-10">
+        {/* Right Actions / Search */}
+        <div className="w-full md:w-1/2 flex justify-end gap-4 z-10">
           <StockSearch />
-        </div>
-
-        {/* Right Actions */}
-        <div className="w-full md:w-1/4 flex justify-end">
-          <ModeToggle />
         </div>
       </div>
 
