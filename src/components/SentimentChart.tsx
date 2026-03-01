@@ -34,31 +34,31 @@ export function SentimentChart({ value }: { value: number }) {
   let trendIcon = null;
 
   if (value < 20) {
-     sentiment = "Greed";
-     color = "#10b981"; // Emerald
-     trendIcon = <TrendingUp className="h-4 w-4 text-emerald-500" />;
+    sentiment = "Greed";
+    color = "#10b981"; // Emerald
+    trendIcon = <TrendingUp className="h-4 w-4 text-emerald-500" />;
   } else if (value > 30) {
-     sentiment = "Fear";
-     color = "#ef4444"; // Red
-     trendIcon = <TrendingDown className="h-4 w-4 text-red-500" />;
+    sentiment = "Fear";
+    color = "#ef4444"; // Red
+    trendIcon = <TrendingDown className="h-4 w-4 text-red-500" />;
   }
 
   // 2. Data Setup
   // We explicitly cap the visual bar at 60 (Max VIX) so it doesn't loop around
   const visualValue = Math.min(value, 60);
-  
+
   const chartData = [
     { name: "vix", value: visualValue, fill: color }
   ];
 
   return (
-    <Card className="flex flex-col border-0 shadow-none bg-transparent h-full">
+    <Card className="flex flex-col border-0 shadow-none bg-transparent">
       <CardHeader className="items-center pb-0 pt-3">
         <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-           Market Sentiment
+          Market Sentiment
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="flex flex-1 items-center justify-center pb-0">
         <ChartContainer
           config={chartConfig}

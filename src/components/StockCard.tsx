@@ -21,7 +21,7 @@ interface Stock {
   imageUrl?: string | null;
 }
 
-export function StockCard({ stock: initialStock }: { stock: Stock }) {
+export function StockCard({ stock: initialStock, compact = false }: { stock: Stock, compact?: boolean }) {
   const [stock, setStock] = useState(initialStock);
   const isPositive = stock.change > 0;
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -51,16 +51,16 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
         // Let's just check if we can get the stock data another way or if we should just wait.
         // Actually, we can just use router.refresh() and rely on the Server Component 
         // providing the new data, but we need to know when to stop polling.
-        
+
         // BETTER: Let's fetch from the DB via a new simple API or just use the current stock from props.
         // Since we are in a Client Component, we can't easily read DB directly.
         // Let's use the search API if it exists or just wait for the background task.
-        
+
         const res = await fetch(`/api/stocks/refresh`, {
           method: 'POST',
           body: JSON.stringify({ symbol: stock.symbol })
         });
-        
+
         if (res.ok) {
           const updated = await res.json();
           if (updated && !updated.narrative.includes("Analysis pending")) {
@@ -85,7 +85,7 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
   const handlePin = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     try {
       await fetch('/api/stocks/feature', {
         method: 'POST',
@@ -97,21 +97,87 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
     }
   };
 
+  if (compact) {
+    return (
+      <div className="relative group h-full">
+        <div className="absolute top-1 right-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+          <DeleteButton symbol={stock.symbol} />
+        </div>
+        <Link href={`/stocks/${stock.symbol}`} className="block h-full">
+          <Card className={`h-full cursor-pointer transition-all duration-300 hover:bg-card/80 dark:hover:bg-card/60 p-3 flex flex-col justify-center gap-2 ${stock.isFeatured ? 'bg-primary/10 border-primary/30 ring-1 ring-primary/30' : ''}`}>
+
+            <div className="flex justify-between items-start w-full gap-3">
+              {/* Left: Logo, Ticker, Name */}
+              <div className="flex items-center gap-3 overflow-hidden">
+                {stock.imageUrl && (
+                  <div className="relative w-8 h-8 shrink-0 rounded-full overflow-hidden bg-white shadow-sm ring-1 ring-border">
+                    <Image
+                      src={stock.imageUrl}
+                      alt={stock.symbol}
+                      fill
+                      className="object-contain p-1"
+                      sizes="32px"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-col overflow-hidden">
+                  <div className="flex items-center gap-1.5 ">
+                    <span className="font-bold truncate">{stock.symbol}</span>
+                    {stock.isFeatured && <Pin className="w-3 h-3 text-primary shrink-0 fill-current" />}
+                  </div>
+                  <span className="text-xs text-muted-foreground truncate">{stock.name}</span>
+                </div>
+              </div>
+
+              {/* Right: Price & Chart Spark/Badge */}
+              <div className="flex flex-col items-end shrink-0">
+                <span className="font-semibold text-sm">{currencySymbol}{stock.price.toFixed(2)}</span>
+                <Badge
+                  variant={isPositive ? "default" : "destructive"}
+                  className={`px-1.5 py-0 mt-0.5 text-[10px] h-4 ${isPositive ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
+                >
+                  {isPositive ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
+                  {stock.change.toFixed(2)}%
+                </Badge>
+              </div>
+            </div>
+
+            {/* Bottom: AI Narrative */}
+            <div className="w-full text-xs text-muted-foreground italic pt-2 border-t border-border/40 mt-1">
+              {isPending ? (
+                <div className="space-y-1 py-0.5">
+                  <Skeleton className="h-2 w-full" />
+                  <Skeleton className="h-2 w-[80%]" />
+                </div>
+              ) : (
+                <div className="relative pl-3">
+                  <div className={`absolute left-0 top-1.5 w-1.5 h-1.5 shrink-0 rounded-full ${stock.narrative && stock.narrative !== "Analyst unavailable." ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
+                  <span className="line-clamp-2">"{stock.narrative || "Analyst unavailable."}"</span>
+                </div>
+              )}
+            </div>
+
+          </Card>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="relative group">
       <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
         <DeleteButton symbol={stock.symbol} />
       </div>
       <Link href={`/stocks/${stock.symbol}`} className="block h-full">
-        <Card className={`h-full cursor-pointer transition-all hover:bg-secondary/80 ${stock.isFeatured ? 'bg-primary/5 border-primary/20 ring-1 ring-primary/20' : 'bg-card'}`}>
+        <Card className={`h-full cursor-pointer transition-all duration-300 hover:bg-card/80 dark:hover:bg-card/60 ${stock.isFeatured ? 'bg-primary/10 border-primary/30 ring-1 ring-primary/30' : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 {stock.imageUrl && (
                   <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white shadow-sm ring-1 ring-border">
-                    <Image 
-                      src={stock.imageUrl} 
-                      alt={stock.symbol} 
+                    <Image
+                      src={stock.imageUrl}
+                      alt={stock.symbol}
                       fill
                       className="object-contain p-1"
                       sizes="32px"
@@ -123,8 +189,8 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
               </div>
               <p className="text-sm text-muted-foreground">{stock.name}</p>
             </div>
-            <Badge 
-              variant={isPositive ? "default" : "destructive"} 
+            <Badge
+              variant={isPositive ? "default" : "destructive"}
               className={`px-2 py-1 text-sm ${isPositive ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
             >
               {isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
@@ -133,7 +199,7 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold mb-4">{currencySymbol}{stock.price.toFixed(2)}</div>
-            
+
             <div className="space-y-2">
               <div className="flex items-center justify-between w-full text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 <div className="flex items-center gap-2">
@@ -154,12 +220,12 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
                       e.preventDefault(); // Prevent Link navigation
                       e.stopPropagation(); // Stop event bubbling
                       setIsRefreshing(true);
-                      
+
                       await fetch('/api/stocks/refresh', {
                         method: 'POST',
                         body: JSON.stringify({ symbol: stock.symbol })
                       });
-                      
+
                       setIsRefreshing(false);
                       router.refresh(); // Refresh UI to show new narrative
                     }}

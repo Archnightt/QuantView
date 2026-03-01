@@ -9,107 +9,56 @@ import Image from "next/image";
 
 // Helper for "2h ago"
 function timeAgo(timestamp: number) {
-  if (!timestamp) return '';
-  const seconds = Math.floor((new Date().getTime() - timestamp * 1000) / 1000); // *1000 if timestamp is seconds
-  let interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + "h ago";
-  interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + "m ago";
-  return "Just now";
+	if (!timestamp) return '';
+	const seconds = Math.floor((new Date().getTime() - timestamp * 1000) / 1000); // *1000 if timestamp is seconds
+	let interval = seconds / 3600;
+	if (interval > 1) return Math.floor(interval) + "h ago";
+	interval = seconds / 60;
+	if (interval > 1) return Math.floor(interval) + "m ago";
+	return "Just now";
 }
 
 export function NewsWidget({ news }: { news: any[] }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+	if (!news || news.length === 0) return null;
 
-  // Auto-Slide (6s)
-  useEffect(() => {
-    if (isPaused || !news || news.length === 0) return;
-    const id = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % news.length);
-    }, 6000);
-    timerRef.current = id;
-    return () => clearInterval(id);
-  }, [isPaused, news]);
-
-  if (!news || news.length === 0) return null;
-
-  const story = news[currentIndex];
-  // Safe image handling
-  const imageUrl = story.thumbnail?.resolutions?.[0]?.url;
-
-  const nextStory = () => setCurrentIndex((prev) => (prev + 1) % news.length);
-  const prevStory = () => setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
-
-  return (
-		<Card className="group relative h-full w-full overflow-hidden flex flex-col justify-end border-border bg-neutral-950" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
-			{/* 1. Background Image */}
-			<div className="absolute inset-0 z-0">
-				{imageUrl ? (
-					<Image
-						src={imageUrl}
-						alt="News Background"
-						fill
-						className="object-cover transition-transform duration-[10000ms] ease-linear scale-100 group-hover:scale-110"
-						priority
-						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-					/>
-				) : (
-					<div className="w-full h-full bg-gradient-to-br from-zinc-800 to-black opacity-80" />
-				)}
-				{/* Vignette Gradient (Darkens the bottom for text) */}
-				<div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+	return (
+		<Card className="flex flex-col bg-card/50 backdrop-blur-xl border-white/10 dark:border-white/5 overflow-hidden">
+			<div className="p-4 border-b border-border/50 bg-muted/20 flex items-center gap-2">
+				<h3 className="font-semibold">Latest News</h3>
+				<span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">{news.length} updates</span>
 			</div>
 
-			{/* 2. Progress Bar */}
-			{!isPaused && <div key={currentIndex} className="absolute top-0 left-0 h-1 bg-primary z-20 animate-[progress_6s_linear_forwards]" style={{ width: "100%" }} />}
+			<div className="flex-grow overflow-y-auto p-4 space-y-4 max-h-[500px] scrollbar-thin scrollbar-thumb-secondary">
+				{news.map((story, i) => (
+					<div key={i} className="group flex gap-4 p-4 rounded-lg bg-card/40 border border-transparent hover:border-border/50 hover:bg-card/60 transition-colors">
+						{/* Thumbnail */}
+						{story.thumbnail?.resolutions?.[0]?.url && (
+							<div className="relative w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted">
+								<Image
+									src={story.thumbnail.resolutions[0].url}
+									alt="thumbnail"
+									fill
+									className="object-cover transition-transform group-hover:scale-110"
+									sizes="64px"
+								/>
+							</div>
+						)}
 
-			{/* 3. Content Area (The Vignette) */}
-			<div className="relative z-10 p-6 flex flex-col gap-3">
-				{/* Metadata Row */}
-				<div className="flex items-center justify-between">
-					<span className="text-[10px] font-bold text-black bg-white/90 px-2 py-0.5 rounded uppercase tracking-wider">{story.publisher}</span>
-					<span className="text-xs text-zinc-300 flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-md">
-						<Clock className="w-3 h-3" />
-						{timeAgo(story.providerPublishTime)}
-					</span>
-				</div>
-
-				{/* Title */}
-				<Link href={story.link} target="_blank" className="block group/link">
-					<h3 className="text-xl font-bold leading-tight text-white group-hover/link:text-blue-300 transition-colors">{story.title}</h3>
-				</Link>
-
-				{/* The Insight / Summary */}
-				{story.summary && <p className="text-sm text-zinc-200 line-clamp-2 leading-relaxed opacity-90">{story.summary}</p>}
-
-				{/* Navigation Controls (Bottom Right) */}
-				<div className="flex items-center justify-between mt-2 pt-3 border-t border-white/10">
-					<span className="text-[10px] text-zinc-400 tabular-nums">
-						{currentIndex + 1} / {news.length}
-					</span>
-					<div className="flex gap-2">
-						<Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20 rounded-full" onClick={prevStory}>
-							<ChevronLeft className="w-4 h-4" />
-						</Button>
-						<Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20 rounded-full" onClick={nextStory}>
-							<ChevronRight className="w-4 h-4" />
-						</Button>
+						{/* Content */}
+						<div className="flex flex-col flex-grow min-w-0">
+							<div className="flex items-center gap-2 mb-1">
+								<span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{story.publisher}</span>
+								<span className="text-[10px] text-muted-foreground/70">• {timeAgo(story.providerPublishTime)}</span>
+							</div>
+							<Link href={story.link} target="_blank" className="block">
+								<h4 className="text-sm font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+									{story.title}
+								</h4>
+							</Link>
+						</div>
 					</div>
-				</div>
+				))}
 			</div>
-
-			<style jsx global>{`
-				@keyframes progress {
-					from {
-						width: 0%;
-					}
-					to {
-						width: 100%;
-					}
-				}
-			`}</style>
 		</Card>
 	);
 }

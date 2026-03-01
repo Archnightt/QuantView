@@ -63,7 +63,8 @@ interface DashboardProps {
 }
 
 export function DraggableDashboard({ serverData }: DashboardProps) {
-  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v4", [
+  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v5", [
+    "news",
     "market-summary",
     "movers",
     "economic-calendar",
@@ -84,25 +85,12 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
     })
   );
 
-  const getItemClass = (id: string) => {
-    switch (id) {
-      case "sectors":
-        return "col-span-1 min-h-[300px]";
-      case "market-summary":
-        return "col-span-1 min-h-[300px]";
-      case "sentiment":
-        return "col-span-1 min-h-[300px]";
-      case "movers":
-        return "col-span-1 row-span-2 min-h-[700px]";
-      case "economic-calendar":
-        return "col-span-1 min-h-[350px]";
-      default:
-        return "col-span-1";
-    }
-  };
+
 
   const renderWidget = (id: string) => {
     switch (id) {
+      case "news":
+        return <NewsWidget news={serverData.news} />;
       case "sectors":
         return <SectorWidget data={serverData.sectors} />;
       case "sentiment":
@@ -134,9 +122,9 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
   if (!isLoaded) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {["market-summary", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
-          <div key={id} className={getItemClass(id)}>
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+        {["news", "market-summary", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
+          <div key={id} className="inline-block w-full mb-6 break-inside-avoid">
             {renderWidget(id)}
           </div>
         ))}
@@ -152,9 +140,9 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
           {items.map((id) => (
-            <SortableItem key={id} id={id} className={getItemClass(id)}>
+            <SortableItem key={id} id={id} className="inline-block w-full mb-6 break-inside-avoid">
               {renderWidget(id)}
             </SortableItem>
           ))}
@@ -163,8 +151,8 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
       <DragOverlay>
         {activeId ? (
-          <div className={`${getItemClass(activeId)} opacity-80 cursor-grabbing`}>
-             <div className="h-full w-full bg-secondary/50 rounded-xl border-2 border-primary/50" />
+          <div className="w-full opacity-80 cursor-grabbing break-inside-avoid">
+            <div className="h-full w-full bg-secondary/50 rounded-xl border-2 border-primary/50" />
           </div>
         ) : null}
       </DragOverlay>

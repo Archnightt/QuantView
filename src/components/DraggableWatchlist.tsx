@@ -14,7 +14,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-  rectSortingStrategy,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { StockCard } from "@/components/StockCard";
@@ -22,7 +22,7 @@ import { StockCard } from "@/components/StockCard";
 // --- Sortable Item Wrapper ---
 function SortableStockItem({ id, stock }: { id: string, stock: any }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  
+
   // Track if we were recently dragging to suppress click events
   const wasDraggingRef = React.useRef(false);
 
@@ -36,7 +36,7 @@ function SortableStockItem({ id, stock }: { id: string, stock: any }) {
       return () => clearTimeout(timer);
     }
   }, [isDragging]);
-  
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -50,8 +50,8 @@ function SortableStockItem({ id, stock }: { id: string, stock: any }) {
          Prevent interaction with the card content while dragging.
          This prevents the click event from firing on the Link/Card after a drag operation finishes.
       */}
-      <div 
-        className="h-full" 
+      <div
+        className="h-full"
         style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
         onClickCapture={(e) => {
           if (wasDraggingRef.current) {
@@ -60,7 +60,7 @@ function SortableStockItem({ id, stock }: { id: string, stock: any }) {
           }
         }}
       >
-        <StockCard stock={stock} />
+        <StockCard stock={stock} compact={true} />
       </div>
     </div>
   );
@@ -97,11 +97,11 @@ export function DraggableWatchlist({ initialStocks }: { initialStocks: any[] }) 
   };
 
   if (!isMounted) {
-    // Render static grid to prevent hydration mismatch
+    // Render static list to prevent hydration mismatch
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-col gap-3">
         {initialStocks.map((stock) => (
-           <div key={stock.symbol}><StockCard stock={stock} /></div>
+          <div key={stock.symbol} className="min-h-[5rem]"><StockCard stock={stock} compact={true} /></div>
         ))}
       </div>
     );
@@ -109,10 +109,12 @@ export function DraggableWatchlist({ initialStocks }: { initialStocks: any[] }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={stocks.map(s => s.symbol)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <SortableContext items={stocks.map(s => s.symbol)} strategy={verticalListSortingStrategy}>
+        <div className="flex flex-col gap-3">
           {stocks.map((stock) => (
-            <SortableStockItem key={stock.symbol} id={stock.symbol} stock={stock} />
+            <div key={stock.symbol} className="min-h-[5rem]">
+              <SortableStockItem id={stock.symbol} stock={stock} />
+            </div>
           ))}
         </div>
       </SortableContext>

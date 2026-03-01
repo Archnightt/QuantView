@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Card } from "@/components/ui/card";
-import { 
+import {
   TrendingUp, TrendingDown, Activity, Zap, PieChart, ChevronLeft, ChevronRight,
-  Cpu, Landmark, HeartPulse, ShoppingBag, ShoppingCart, Factory, Lightbulb, Pickaxe, Building, MessageCircle 
+  Cpu, Landmark, HeartPulse, ShoppingBag, ShoppingCart, Factory, Lightbulb, Pickaxe, Building, MessageCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SentimentChart } from "@/components/SentimentChart";
@@ -22,7 +22,7 @@ function WidgetHeader({ title, icon: Icon }: { title: string, icon: any }) {
 
 function MiniSparkline({ data, isPositive }: { data: number[], isPositive: boolean }) {
   if (!data || data.length < 2) return null;
-  
+
   const min = Math.min(...data);
   const max = Math.max(...data);
   // Normalize to 0-100 range for SVG
@@ -88,34 +88,34 @@ export function SectorWidget({ data }: { data: any[] }) {
   const prevPage = () => setPage((p) => (p - 1 + totalPages) % totalPages);
 
   return (
-    <Card className="h-full p-4 dark:bg-card flex flex-col">
-      <div className="flex items-center justify-between mb-3">
-         <div className="flex items-center gap-2 text-muted-foreground">
-            <PieChart className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-wider">Sectors</span>
-         </div>
-         <div className="flex gap-1">
-           <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary/50" onClick={prevPage}>
-             <ChevronLeft className="w-3 h-3" />
-           </Button>
-           <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary/50" onClick={nextPage}>
-             <ChevronRight className="w-3 h-3" />
-           </Button>
-         </div>
+    <Card className="flex flex-col group/widget">
+      <div className="flex items-center justify-between p-4 pb-3 border-b border-white/5">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <PieChart className="w-4 h-4" />
+          <span className="text-xs font-semibold uppercase tracking-wider">Sectors</span>
+        </div>
+        <div className="flex gap-1">
+          <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary/50" onClick={prevPage}>
+            <ChevronLeft className="w-3 h-3" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary/50" onClick={nextPage}>
+            <ChevronRight className="w-3 h-3" />
+          </Button>
+        </div>
       </div>
-      
-      <div className="space-y-2 flex-1">
+
+      <div className="space-y-2 flex-1 p-4">
         {paginatedData.map((sector: any) => {
           const Icon = SECTOR_ICONS[sector.symbol] || PieChart;
           const change = sector.regularMarketChangePercent || 0;
           const isPositive = change > 0;
-          
+
           return (
-            <div key={sector.symbol} className="flex items-center justify-between py-2 group animate-in fade-in slide-in-from-right-2 duration-300">
+            <div key={sector.symbol} className="flex items-center justify-between py-2 group cursor-pointer rounded-lg hover:bg-muted/40 transition-colors px-2 -mx-2 animate-in fade-in slide-in-from-right-2 duration-300">
               {/* Left: Icon + Name */}
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${isPositive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                   <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="text-sm font-medium leading-none mb-1">
@@ -129,42 +129,42 @@ export function SectorWidget({ data }: { data: any[] }) {
 
               {/* Right: Sparkline + % Change */}
               <div className="flex items-center gap-4">
-                 <MiniSparkline data={sector.sparkline} isPositive={isPositive} />
-                 <div className={`text-sm font-semibold w-12 text-right ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                   {change > 0 ? '+' : ''}{change.toFixed(2)}%
-                 </div>
+                <MiniSparkline data={sector.sparkline} isPositive={isPositive} />
+                <div className={`text-sm font-semibold w-12 text-right ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                  {change > 0 ? '+' : ''}{change.toFixed(2)}%
+                </div>
               </div>
             </div>
           );
         })}
       </div>
-      
+
       <div className="mt-auto pt-2 flex justify-center gap-1">
         {Array.from({ length: totalPages }).map((_, i) => (
-          <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === page ? 'w-4 bg-primary' : 'w-1 bg-primary/20'}`} />
+          <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === page ? 'w-4 bg-primary' : 'w-1 bg-primary/20 group-hover/widget:bg-primary/40'}`} />
         ))}
       </div>
-    </Card>
+    </Card >
   );
 }
 
 export function SentimentWidget({ vix }: { vix: any }) {
   const value = vix?.regularMarketPrice || 0;
-  
+
   return (
-    <div className="h-full bg-card dark:bg-card rounded-xl overflow-hidden">
-       <SentimentChart value={value} />
+    <div className="bg-card dark:bg-card rounded-xl overflow-hidden shadow-sm border border-white/5">
+      <SentimentChart value={value} />
     </div>
   );
 }
 
 export function TrendingWidget({ data }: { data: any[] }) {
   return (
-    <Card className="h-full p-4 dark:bg-card">
+    <Card className="p-4">
       <WidgetHeader title="Trending Now" icon={Zap} />
       <div className="space-y-3">
         {data.map((t: any) => (
-          <div key={t.symbol} className="flex justify-between items-center text-sm">
+          <div key={t.symbol} className="flex justify-between items-center text-sm py-1.5 px-2 -mx-2 rounded-md hover:bg-muted/40 transition-colors cursor-pointer">
             <span className="font-bold">{t.symbol}</span>
             <span className="text-muted-foreground truncate max-w-[100px] text-xs">Active</span>
           </div>

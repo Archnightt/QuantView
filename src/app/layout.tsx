@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Sidebar } from "@/components/Sidebar";
+import { TopNav } from "@/components/TopNav";
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from "@/components/SidebarProvider";
 import { MainContentWrapper } from "@/components/MainContentWrapper";
@@ -32,14 +32,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SidebarProvider>
-            <div className="h-full relative flex min-h-screen bg-background">
-               {/* Sidebar (Fixed on Desktop, Hidden on Mobile) */}
-               <Sidebar />
-               
-               {/* Main Content Area - Shifted Right on Desktop */}
-               <MainContentWrapper>
-                 {children}
-               </MainContentWrapper>
+            <div className="h-full relative flex flex-col min-h-screen bg-background">
+              {/* Top Navigation Bar */}
+              <TopNav />
+
+              {/* Main Content Area */}
+              <MainContentWrapper>
+                {children}
+              </MainContentWrapper>
             </div>
           </SidebarProvider>
           <Toaster />

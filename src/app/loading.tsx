@@ -23,21 +23,28 @@ export default function LoadingDashboard() {
                 <Skeleton className="h-4 w-32 shrink-0" />
             </div>
 
-            {/* Grid skeleton */}
+            {/* 2. Pro Desktop Bento Grid Skeleton */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[400px]">
-                <div className="col-span-1 lg:col-span-3">
-                    <Skeleton className="h-[200px] w-full rounded-xl" />
-                </div>
-                <div className="col-span-1 lg:col-span-6">
-                    <Skeleton className="h-[400px] w-full rounded-xl" />
-                </div>
-                <div className="col-span-1 lg:col-span-3">
-                    <Skeleton className="h-[400px] w-full rounded-xl" />
-                </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <Skeleton className="h-[400px] w-full rounded-xl bg-card" />
+                {/* Left Sidebar: Watchlist */}
+                <div className="lg:col-span-3 flex flex-col gap-6">
+                    <Skeleton className="h-[500px] w-full rounded-xl bg-card" />
+                </div>
+
+                {/* Center/Right: Main Content */}
+                <div className="lg:col-span-9 flex flex-col gap-6">
+                    {/* Top Row: Market News Panorama */}
+                    <div className="w-full">
+                        <Skeleton className="h-[400px] w-full rounded-xl bg-card" />
+                    </div>
+
+                    {/* Bottom Row: Widgets Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <Skeleton className="h-[300px] w-full rounded-xl bg-card col-span-1" />
+                        <Skeleton className="h-[300px] w-full rounded-xl bg-card col-span-1" />
+                        <Skeleton className="h-[300px] w-full rounded-xl bg-card col-span-1" />
+                    </div>
+                </div>
             </div>
         </div>
     );
