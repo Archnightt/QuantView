@@ -1,4 +1,5 @@
 import yahooFinance from 'yahoo-finance2';
+import { unstable_cache } from 'next/cache';
 import { getStockHistory } from "@/lib/history";
 import { prisma } from "@/lib/prisma";
 
@@ -9,7 +10,7 @@ const MARKET_GROUPS = {
   currencies: ['EURUSD=X', 'JPY=X', 'GBPUSD=X', 'INR=X']
 };
 
-export async function getDashboardData() {
+async function fetchDashboardData() {
   try {
     // @ts-ignore
     const yf = new yahooFinance({ 
@@ -154,3 +155,9 @@ export async function getDashboardData() {
     };
   }
 }
+
+export const getDashboardData = unstable_cache(
+  fetchDashboardData,
+  ['dashboard-data-cache'],
+  { revalidate: 60 } // Cache for 1 minute
+);
