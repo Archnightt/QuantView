@@ -84,22 +84,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
     })
   );
 
-  const getItemClass = (id: string) => {
-    switch (id) {
-      case "sectors":
-        return "col-span-1 min-h-[300px]";
-      case "market-summary":
-        return "col-span-1 min-h-[300px]";
-      case "sentiment":
-        return "col-span-1 min-h-[300px]";
-      case "movers":
-        return "col-span-1 row-span-2 min-h-[700px]";
-      case "economic-calendar":
-        return "col-span-1 min-h-[350px]";
-      default:
-        return "col-span-1";
-    }
-  };
+
 
   const renderWidget = (id: string) => {
     switch (id) {
@@ -134,9 +119,9 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
   if (!isLoaded) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 items-start">
         {["market-summary", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
-          <div key={id} className={getItemClass(id)}>
+          <div key={id} className="w-full">
             {renderWidget(id)}
           </div>
         ))}
@@ -152,9 +137,9 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 items-start">
           {items.map((id) => (
-            <SortableItem key={id} id={id} className={getItemClass(id)}>
+            <SortableItem key={id} id={id} className="w-full">
               {renderWidget(id)}
             </SortableItem>
           ))}
@@ -163,8 +148,8 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
       <DragOverlay>
         {activeId ? (
-          <div className={`${getItemClass(activeId)} opacity-80 cursor-grabbing`}>
-             <div className="h-full w-full bg-secondary/50 rounded-xl border-2 border-primary/50" />
+          <div className="w-full opacity-80 cursor-grabbing break-inside-avoid shadow-2xl">
+            <div className="h-full w-full bg-secondary/50 rounded-xl border-2 border-primary/50" />
           </div>
         ) : null}
       </DragOverlay>

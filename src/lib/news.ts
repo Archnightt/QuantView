@@ -10,15 +10,15 @@ export interface NewsItem {
   thumbnail?: {
     resolutions: { url: string; width: number; height: number }[];
   };
-  summary?: string; 
+  summary?: string;
 }
 
 export async function getFullNewsFeed(count: number = 20, query: string = 'US Markets'): Promise<NewsItem[]> {
   return fetchWithCache(`news:feed:${query}:${count}`, async () => {
     try {
       // @ts-ignore
-      const yf = new yahooFinance();
-      
+      const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
+
       // Perform multiple parallel searches to ensure we get enough items (Yahoo often caps at 10 per query)
       // We request more than needed to handle deduplication and API limits
       const fetchCount = Math.max(count, 30);
@@ -30,12 +30,12 @@ export async function getFullNewsFeed(count: number = 20, query: string = 'US Ma
       ]);
 
       const allNews = [
-        ...(res1.news || []), 
+        ...(res1.news || []),
         ...(res2.news || []),
         ...(res3.news || []),
         ...(res4.news || [])
       ];
-      
+
       if (allNews.length === 0) return [];
 
       // Deduplicate by UUID
@@ -53,7 +53,7 @@ export async function getFullNewsFeed(count: number = 20, query: string = 'US Ma
         link: item.link,
         providerPublishTime: item.providerPublishTime,
         thumbnail: item.thumbnail,
-        summary: item.summary || item.snippet || "" 
+        summary: item.summary || item.snippet || ""
       })) as NewsItem[];
 
     } catch (error) {
@@ -64,6 +64,6 @@ export async function getFullNewsFeed(count: number = 20, query: string = 'US Ma
 }
 
 export async function getMarketNews(): Promise<NewsItem[]> {
-   // Unify logic to ensure consistency across dashboard and news page
-   return await getFullNewsFeed(14);
+  // Unify logic to ensure consistency across dashboard and news page
+  return await getFullNewsFeed(14);
 }

@@ -6,8 +6,8 @@ async function getIndicesData() {
   const symbols = ['^GSPC', '^IXIC', '^DJI', '^NSEI', '^BSESN'];
   try {
     // @ts-ignore
-    const yf = new yahooFinance();
-    
+    const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
+
     // Fetch quotes and sparklines in parallel
     const promises = symbols.map(async (sym) => {
       try {
@@ -18,10 +18,10 @@ async function getIndicesData() {
 
         const [quote, chart] = await Promise.all([
           yf.quote(sym),
-          yf.chart(sym, { 
-            period1: startDate, 
-            period2: endDate, 
-            interval: '60m' 
+          yf.chart(sym, {
+            period1: startDate,
+            period2: endDate,
+            interval: '60m'
           } as any)
         ]);
         return { symbol: sym, quote, chart };
@@ -42,7 +42,7 @@ async function getIndicesData() {
 // Simple SVG Sparkline Component
 function Sparkline({ data, color }: { data: number[], color: string }) {
   if (data.length < 2) return null;
-  
+
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
@@ -94,13 +94,13 @@ export async function MarketIndices() {
         const changePercent = quote.regularMarketChangePercent || 0;
         const isPositive = change >= 0;
         const color = isPositive ? "#10b981" : "#ef4444"; // emerald-500 : red-500
-        
+
         // Extract closes for sparkline
         const sparkData = (chart as any)?.quotes?.map((q: any) => q.close).filter((c: any) => c) || [];
 
         return (
-          <Card 
-            key={symbol} 
+          <Card
+            key={symbol}
             className="min-w-[200px] flex-1 p-4 bg-card hover:shadow-md transition-all duration-200 shrink-0 border-border"
           >
             <div className="flex justify-between items-start mb-2">
@@ -113,16 +113,16 @@ export async function MarketIndices() {
                 </div>
               </div>
               <div className={`flex flex-col items-end text-xs font-medium ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-                 <span className="flex items-center">
-                    {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                    {changePercent.toFixed(2)}%
-                 </span>
-                 <span className="opacity-80">
-                   {change > 0 ? '+' : ''}{change.toFixed(2)}
-                 </span>
+                <span className="flex items-center">
+                  {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
+                  {changePercent.toFixed(2)}%
+                </span>
+                <span className="opacity-80">
+                  {change > 0 ? '+' : ''}{change.toFixed(2)}
+                </span>
               </div>
             </div>
-            
+
             {/* Sparkline Area */}
             <div className="h-8 w-full mt-2 opacity-80">
               <Sparkline data={sparkData} color={color} />

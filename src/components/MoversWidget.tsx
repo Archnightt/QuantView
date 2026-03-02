@@ -20,12 +20,12 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
   }
 
   return (
-    <div className="h-[600px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-secondary">
+    <div className="max-h-[400px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-secondary">
       {items.map((item) => (
-        <Link 
-            key={item.symbol} 
-            href={`/stocks/${item.symbol}`}
-            className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors border border-transparent hover:border-border/50"
+        <Link
+          key={item.symbol}
+          href={`/stocks/${item.symbol}`}
+          className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors border border-transparent hover:border-border/50"
         >
           <div className="flex flex-col">
             <span className="font-bold text-sm">{item.symbol}</span>
@@ -37,13 +37,12 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
             <div className="font-mono text-sm font-medium">
               ${item.regularMarketPrice?.toFixed(2)}
             </div>
-            <Badge 
-              variant="outline" 
-              className={`text-xs px-1.5 py-0 h-5 mt-1 border-0 ${
-                type === 'gainers' 
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" 
-                  : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-              }`}
+            <Badge
+              variant="outline"
+              className={`text-xs px-1.5 py-0 h-5 mt-1 border-0 ${type === 'gainers'
+                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                }`}
             >
               {type === 'gainers' ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
               {Math.abs(item.regularMarketChangePercent).toFixed(2)}%
@@ -67,10 +66,10 @@ export function MoversWidget({ gainers, losers }: { gainers: any[], losers: any[
         <Tabs defaultValue="gainers" className="w-full h-full flex flex-col">
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="gainers" className="text-green-600 dark:text-green-400 data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/30">
-                Top Gainers
+              Top Gainers
             </TabsTrigger>
             <TabsTrigger value="losers" className="text-red-600 dark:text-red-400 data-[state=active]:bg-red-100 dark:data-[state=active]:bg-red-900/30">
-                Top Losers
+              Top Losers
             </TabsTrigger>
           </TabsList>
           <TabsContent value="gainers" className="flex-1 mt-0">

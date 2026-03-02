@@ -13,10 +13,11 @@ const MARKET_GROUPS = {
 async function fetchDashboardData() {
   try {
     // @ts-ignore
-    const yf = new yahooFinance({ 
-      validation: { logErrors: false } 
+    const yf = new yahooFinance({
+      validation: { logErrors: false },
+      suppressNotices: ['yahooSurvey']
     });
-    
+
     // 1. Fetch Featured Stock (Database)
     const featuredStock = await prisma.stock.findFirst({
       where: { isFeatured: true }
@@ -27,9 +28,9 @@ async function fetchDashboardData() {
     // 2. Fetch Dashboard Data
     const sectorSymbols = ['XLK', 'XLF', 'XLV', 'XLE', 'XLY', 'XLP', 'XLI', 'XLU', 'XLB', 'XLRE', 'XLC'];
     const summarySymbols = [
-      ...MARKET_GROUPS.crypto, 
-      ...MARKET_GROUPS.rates, 
-      ...MARKET_GROUPS.commodities, 
+      ...MARKET_GROUPS.crypto,
+      ...MARKET_GROUPS.rates,
+      ...MARKET_GROUPS.commodities,
       ...MARKET_GROUPS.currencies
     ];
 
@@ -40,45 +41,45 @@ async function fetchDashboardData() {
     // B. Sector Sparklines
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 7); 
+    startDate.setDate(endDate.getDate() - 7);
 
     const sparklinesPromise = Promise.all(
-      sectorSymbols.map(sym => 
-        yf.chart(sym, { 
-          period1: startDate, 
-          period2: endDate, 
-          interval: '1d' 
+      sectorSymbols.map(sym =>
+        yf.chart(sym, {
+          period1: startDate,
+          period2: endDate,
+          interval: '1d'
         })
-        .then((res: any) => ({ symbol: sym, data: res.quotes.map((q: any) => q.close) }))
-        .catch(() => ({ symbol: sym, data: [] }))
+          .then((res: any) => ({ symbol: sym, data: res.quotes.map((q: any) => q.close) }))
+          .catch(() => ({ symbol: sym, data: [] }))
       )
     );
 
     // C. Other Promises
     const vixPromise = yf.quote(['^VIX']);
     const trendingPromise = yf.trendingSymbols('US').catch(() => ({ quotes: [] }));
-    
+
     // Use screener as dailyGainers/dailyLosers are deprecated
     const gainersPromise = yf.screener({ scrIds: 'day_gainers', count: 10 }, { validate: false } as any).catch(() => ({ quotes: [] }));
     const losersPromise = yf.screener({ scrIds: 'day_losers', count: 10 }, { validate: false } as any).catch(() => ({ quotes: [] }));
-    
+
     // Fetch from multiple sources to guarantee volume
     const newsPromise = Promise.all([
       yf.search('^GSPC', { newsCount: 10, quotesCount: 0 }), // S&P 500
       yf.search('^DJI', { newsCount: 10, quotesCount: 0 }),  // Dow Jones
       yf.search('^IXIC', { newsCount: 10, quotesCount: 0 }), // Nasdaq
     ])
-    .then(results => {
-      const allNews = results.flatMap(r => r.news || []);
-      // Deduplicate by UUID
-      const seen = new Set();
-      return allNews.filter(item => {
-        if (!item.uuid || seen.has(item.uuid)) return false;
-        seen.add(item.uuid);
-        return true;
-      });
-    })
-    .catch(() => []);
+      .then(results => {
+        const allNews = results.flatMap(r => r.news || []);
+        // Deduplicate by UUID
+        const seen = new Set();
+        return allNews.filter(item => {
+          if (!item.uuid || seen.has(item.uuid)) return false;
+          seen.add(item.uuid);
+          return true;
+        });
+      })
+      .catch(() => []);
 
     // 5. Fetch Hero Chart History
     const heroPromise = getStockHistory(heroSymbol, '1mo');
@@ -88,7 +89,7 @@ async function fetchDashboardData() {
       sectorsPromise,
       summaryPromise,
       sparklinesPromise,
-      vixPromise, 
+      vixPromise,
       trendingPromise,
       gainersPromise,
       losersPromise,
@@ -140,18 +141,18 @@ async function fetchDashboardData() {
 
   } catch (error) {
     console.error("Dashboard Data Fatal Error:", error);
-    return { 
-      sectors: [], 
+    return {
+      sectors: [],
       marketSummary: { crypto: [], rates: [], commodities: [], currencies: [] },
-      vix: null, 
-      trending: [], 
+      vix: null,
+      trending: [],
       gainers: [],
       losers: [],
       calendar: [],
-      heroHistory: [], 
-      heroSymbol: 'AAPL', 
+      heroHistory: [],
+      heroSymbol: 'AAPL',
       heroName: 'Apple Inc.',
-      news: [] 
+      news: []
     };
   }
 }

@@ -33,19 +33,18 @@ export function EconomicCalendarWidget({ events }: { events: CalendarEvent[] }) 
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-hidden">
-        <div className="h-[260px] overflow-y-auto scrollbar-thin scrollbar-thumb-secondary px-4 pb-2 pt-0 space-y-3">
+        <div className="max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-secondary px-4 pb-2 pt-0 space-y-3">
           {displayEvents.map((item) => (
             <div key={item.id} className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-border/50 hover:border-primary/30 transition-colors">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{item.country || 'GLB'}</span>
-                   <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                     item.importance === 'High' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
-                     item.importance === 'Medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
-                     'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                   }`}>
-                     {item.importance || 'General'}
-                   </span>
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{item.country || 'GLB'}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${item.importance === 'High' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                      item.importance === 'Medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                        'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                    }`}>
+                    {item.importance || 'General'}
+                  </span>
                 </div>
                 <span className="text-sm font-semibold leading-tight">{item.event}</span>
               </div>

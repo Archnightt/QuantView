@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DraggableDashboard } from "@/components/DraggableDashboard";
-import { StockSearch } from "@/components/StockSearch";
+
 import { DraggableWatchlist } from "@/components/DraggableWatchlist";
 import { MarketIndices } from "@/components/MarketIndices";
 import { DraggablePageLayout } from "@/components/DraggablePageLayout";
@@ -19,22 +19,8 @@ export default async function DashboardPage() {
   const dashboardData = await getDashboardData();
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
-      
-      {/* Header Area */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-        <div className="w-full md:w-1/2">
-           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-           <p className="text-muted-foreground">Market overview</p>
-        </div>
-        
-        {/* Right Actions / Search */}
-        <div className="w-full md:w-1/2 flex justify-end gap-4 z-10">
-          <StockSearch />
-        </div>
-      </div>
-
-      {/* 1. Ticker Row */}
+    <div className="p-4 md:p-6 max-w-[98%] mx-auto space-y-6">
+      {/* Ticker Row */}
       <MarketIndices />
 
       {/* 2. Reorderable Sections */}
@@ -51,18 +37,18 @@ export default async function DashboardPage() {
           </div>
         }
         pinnedChart={
-           <div className="h-[400px]">
-             <HeroChart 
-               symbol={dashboardData.heroSymbol} 
-               name={dashboardData.heroName}
-               initialData={dashboardData.heroHistory} 
-             />
-           </div>
+          <div className="h-[400px]">
+            <HeroChart
+              symbol={dashboardData.heroSymbol}
+              name={dashboardData.heroName}
+              initialData={dashboardData.heroHistory}
+            />
+          </div>
         }
         newsFeed={
-           <div className="h-[400px]">
-             <NewsWidget news={dashboardData.news} />
-           </div>
+          <div className="h-[400px]">
+            <NewsWidget news={dashboardData.news} />
+          </div>
         }
         overview={
           <DraggableDashboard serverData={dashboardData} />

@@ -74,7 +74,7 @@ export function StockSearch() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ symbol }),
       });
-      
+
       if (!res.ok) {
         if (res.status === 409) {
           toast({
@@ -123,7 +123,7 @@ export function StockSearch() {
       {/* Sleek Search Trigger */}
       <button
         onClick={() => setOpen(true)}
-        className="group relative flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted-foreground bg-card border border-border/40 rounded-full shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 w-full md:w-96 max-w-lg"
+        className="group relative flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted-foreground bg-card border border-border/40 rounded-full shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 w-full"
       >
         <Search className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
         <span className="flex-1 text-left truncate">Search markets, companies, or symbols...</span>
@@ -134,8 +134,8 @@ export function StockSearch() {
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <DialogTitle className="sr-only">Search Stocks</DialogTitle>
-        <CommandInput 
-          placeholder="Type to search..." 
+        <CommandInput
+          placeholder="Type to search..."
           value={query}
           onValueChange={setQuery}
           className="text-base"
@@ -147,11 +147,11 @@ export function StockSearch() {
               <span className="text-sm">Scanning market data...</span>
             </div>
           )}
-          
+
           {!loading && results.length === 0 && query && (
-             <CommandEmpty className="py-6 text-center text-muted-foreground">
-                No results found for "{query}".
-             </CommandEmpty>
+            <CommandEmpty className="py-6 text-center text-muted-foreground">
+              No results found for "{query}".
+            </CommandEmpty>
           )}
 
           {!loading && results.length > 0 && (
@@ -159,20 +159,20 @@ export function StockSearch() {
               {results.map((item) => {
                 const color = stringToColor(item.symbol);
                 return (
-                  <CommandItem 
-                    key={item.symbol} 
+                  <CommandItem
+                    key={item.symbol}
                     value={`${item.symbol} ${item.shortname || ''} ${item.longname || ''}`}
                     onSelect={() => handleSelect(item.symbol)}
                     className="cursor-pointer py-3 px-4 aria-selected:bg-accent aria-selected:text-accent-foreground rounded-lg my-1 mx-2"
                   >
                     {/* Visual Indicator / Pseudo-Logo */}
-                    <div 
+                    <div
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full mr-4 text-white font-bold text-sm shadow-sm"
                       style={{ backgroundColor: color }}
                     >
                       {item.symbol.substring(0, 1)}
                     </div>
-                    
+
                     <div className="flex flex-col flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-bold truncate text-base">{item.symbol}</span>

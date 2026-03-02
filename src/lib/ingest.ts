@@ -24,10 +24,10 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
     // 3. Decide: Should we regenerate the narrative OR fetch missing logo?
     let narrative = existingStock?.narrative || "Analysis pending...";
     let imageUrl = existingStock?.imageUrl || null;
-    
+
     const lastUpdated = existingStock?.lastUpdated ? new Date(existingStock.lastUpdated) : new Date(0);
     const now = new Date();
-    
+
     // Calculate hours since last update
     const hoursDiff = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
     const isStale = hoursDiff > NARRATIVE_TTL_HOURS;
@@ -39,7 +39,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
 
     // ONLY generate AI if it's stale OR empty OR forced OR we need image
     if (needsDeepData) {
-      
+
       // FETCH DEEP CONTEXT (RAG)
       const deepData = await MarketService.getDeepMarketData(upperSymbol);
 
@@ -48,12 +48,10 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
         const logo = getLogoUrl(deepData.summaryProfile.website);
         if (logo) imageUrl = logo;
       }
-      
-      // Generate AI only if needed (stale, no narrative, or forced)
+
       if (isStale || hasNoNarrative || forceUpdate) {
-        console.log(`🤖 AI Cache Expired or Forced for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h). Generating new...`);
         const aiStart = performance.now();
-        
+
         narrative = await generateNarrative({
           symbol: data.symbol,
           price: data.price,
@@ -67,12 +65,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
         });
 
         const aiEnd = performance.now();
-        console.log(`🧠 AI Generation took ${(aiEnd - aiStart).toFixed(2)}ms`);
-      } else {
-         console.log(`⚡ Using Cached Narrative for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h)`);
       }
-    } else {
-      console.log(`⚡ Using Cached Narrative for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h)`);
     }
 
     // 4. Save to DB (Update price always, update narrative only if changed)
@@ -108,20 +101,13 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
 
 // Keep the bulk update function for the "Refresh All" button
 export async function updateMarketData() {
-  console.log('🔄 START: Market data ingestion...');
-  
   const stocks = await prisma.stock.findMany();
   if (stocks.length === 0) {
-    console.log('⚠️ No stocks in DB to update.');
     return;
   }
 
-  console.log(`📊 Found ${stocks.length} stocks. Updating...`);
-  
   // Process sequentially to avoid rate limits
   for (const stock of stocks) {
     await ingestTicker(stock.symbol);
   }
-
-  console.log('🚀 END: Ingestion complete.');
 }

@@ -9,40 +9,40 @@ import Image from "next/image";
 
 // Helper for "2h ago"
 function timeAgo(timestamp: number) {
-  if (!timestamp) return '';
-  const seconds = Math.floor((new Date().getTime() - timestamp * 1000) / 1000); // *1000 if timestamp is seconds
-  let interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + "h ago";
-  interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + "m ago";
-  return "Just now";
+	if (!timestamp) return '';
+	const seconds = Math.floor((new Date().getTime() - timestamp * 1000) / 1000); // *1000 if timestamp is seconds
+	let interval = seconds / 3600;
+	if (interval > 1) return Math.floor(interval) + "h ago";
+	interval = seconds / 60;
+	if (interval > 1) return Math.floor(interval) + "m ago";
+	return "Just now";
 }
 
 export function NewsWidget({ news }: { news: any[] }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const [isPaused, setIsPaused] = useState(false);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-Slide (6s)
-  useEffect(() => {
-    if (isPaused || !news || news.length === 0) return;
-    const id = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % news.length);
-    }, 6000);
-    timerRef.current = id;
-    return () => clearInterval(id);
-  }, [isPaused, news]);
+	// Auto-Slide (6s)
+	useEffect(() => {
+		if (isPaused || !news || news.length === 0) return;
+		const id = setInterval(() => {
+			setCurrentIndex((prev) => (prev + 1) % news.length);
+		}, 6000);
+		timerRef.current = id;
+		return () => clearInterval(id);
+	}, [isPaused, news]);
 
-  if (!news || news.length === 0) return null;
+	if (!news || news.length === 0) return null;
 
-  const story = news[currentIndex];
-  // Safe image handling
-  const imageUrl = story.thumbnail?.resolutions?.[0]?.url;
+	const story = news[currentIndex];
+	// Safe image handling
+	const imageUrl = story.thumbnail?.resolutions?.[0]?.url;
 
-  const nextStory = () => setCurrentIndex((prev) => (prev + 1) % news.length);
-  const prevStory = () => setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
+	const nextStory = () => setCurrentIndex((prev) => (prev + 1) % news.length);
+	const prevStory = () => setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
 
-  return (
+	return (
 		<Card className="group relative h-full w-full overflow-hidden flex flex-col justify-end border-border bg-neutral-950" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
 			{/* 1. Background Image */}
 			<div className="absolute inset-0 z-0">
@@ -51,7 +51,8 @@ export function NewsWidget({ news }: { news: any[] }) {
 						src={imageUrl}
 						alt="News Background"
 						fill
-						className="object-cover transition-transform duration-[10000ms] ease-linear scale-100 group-hover:scale-110"
+						className="object-cover transition-transform ease-linear scale-100 group-hover:scale-110"
+						style={{ transitionDuration: '10s' }}
 						priority
 						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					/>
