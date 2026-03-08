@@ -20,12 +20,12 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
   }
 
   return (
-    <div className="max-h-[400px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-secondary">
+    <div className="space-y-2 pr-2">
       {items.map((item) => (
         <Link
           key={item.symbol}
           href={`/stocks/${item.symbol}`}
-          className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors border border-transparent hover:border-border/50"
+          className="flex items-center justify-between p-2 rounded-lg hover:bg-secondary/50 transition-colors border border-transparent hover:border-border/50"
         >
           <div className="flex flex-col">
             <span className="font-bold text-sm">{item.symbol}</span>
@@ -56,15 +56,15 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
 
 export function MoversWidget({ gainers, losers }: { gainers: any[], losers: any[] }) {
   return (
-    <Card className="h-full flex flex-col shadow-sm dark:bg-card">
+    <Card className="h-[400px] flex flex-col shadow-sm dark:bg-card">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium flex items-center gap-2">
           Market Movers
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 p-4 pt-0">
+      <CardContent className="flex-1 p-4 pt-0 min-h-0 overflow-hidden">
         <Tabs defaultValue="gainers" className="w-full h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsList className="grid w-full grid-cols-2 mb-4 shrink-0">
             <TabsTrigger value="gainers" className="text-green-600 dark:text-green-400 data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/30">
               Top Gainers
             </TabsTrigger>
@@ -72,10 +72,10 @@ export function MoversWidget({ gainers, losers }: { gainers: any[], losers: any[
               Top Losers
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="gainers" className="flex-1 mt-0">
+          <TabsContent value="gainers" className="flex-1 mt-0 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-secondary">
             <MoverList items={gainers} type="gainers" />
           </TabsContent>
-          <TabsContent value="losers" className="flex-1 mt-0">
+          <TabsContent value="losers" className="flex-1 mt-0 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-secondary">
             <MoverList items={losers} type="losers" />
           </TabsContent>
         </Tabs>

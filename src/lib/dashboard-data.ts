@@ -2,11 +2,12 @@ import yahooFinance from 'yahoo-finance2';
 import { unstable_cache } from 'next/cache';
 import { getStockHistory } from "@/lib/history";
 import { prisma } from "@/lib/prisma";
+import { getAIParsedCalendar } from "@/lib/calendar";
 
 const MARKET_GROUPS = {
   crypto: ['BTC-USD', 'ETH-USD', 'SOL-USD', 'DOGE-USD'],
   rates: ['^TNX', '^TYX', '^FVX', '^IRX'], // 10y, 30y, 5y, 13wk Treasuries
-  commodities: ['CL=F', 'GC=F', 'SI=F', 'NG=F'], // Crude, Gold, Silver, Nat Gas
+  commodities: ['CL=F', 'GC=F', 'SI=F', 'NG=F', 'HG=F', 'ZC=F'], // Crude, Gold, Silver, Nat Gas, Copper, Corn
   currencies: ['EURUSD=X', 'JPY=X', 'GBPUSD=X', 'INR=X']
 };
 
@@ -79,11 +80,14 @@ async function fetchDashboardData() {
       })
       .catch(() => []);
 
+    // D. Economic Calendar
+    const calendarPromise = getAIParsedCalendar().catch(() => []);
+
     // 5. Fetch Hero Chart History
     const heroPromise = getStockHistory(heroSymbol, '1mo');
 
     // 3. Resolve All
-    const [sectors, rawSummary, sparklines, vix, trendingResult, gainersResult, losersResult, news, heroHistory] = await Promise.all([
+    const [sectors, rawSummary, sparklines, vix, trendingResult, gainersResult, losersResult, news, heroHistory, calendar] = await Promise.all([
       sectorsPromise,
       summaryPromise,
       sparklinesPromise,
@@ -92,12 +96,13 @@ async function fetchDashboardData() {
       gainersPromise,
       losersPromise,
       newsPromise,
-      heroPromise
+      heroPromise,
+      calendarPromise
     ]);
 
     // 4. Process Data
     const enhancedSectors = (sectors || []).map((sector: any) => {
-      const spark = sparklines.find(s => s.symbol === sector.symbol);
+      const spark = sparklines.find((s: any) => s.symbol === sector.symbol);
       return { ...sector, sparkline: spark ? spark.data : [] };
     });
 
@@ -130,7 +135,7 @@ async function fetchDashboardData() {
       trending: trendingQuotes,
       gainers: gainers.slice(0, 10),
       losers: losers.slice(0, 10),
-      calendar: [], // Placeholder for Economic Calendar
+      calendar: calendar,
       heroHistory: heroHistory || [],
       heroSymbol,
       heroName,

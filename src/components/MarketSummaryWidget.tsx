@@ -30,14 +30,14 @@ export function MarketSummaryWidget({ data }: { data: any }) {
   }, []);
 
   const QuoteGrid = ({ items }: { items: any[] }) => (
-    <div className="grid grid-cols-2 gap-4 p-4">
+    <div className="grid grid-cols-2 gap-3 p-3">
       {items.map((item) => {
         const change = item.regularMarketChangePercent || 0;
         const isPos = change >= 0;
         return (
-          <div key={item.symbol} className="flex flex-col p-3 rounded-lg bg-background/40 hover:bg-background/60 transition-colors">
+          <div key={item.symbol} className="flex flex-col p-2 rounded-lg bg-background/40 hover:bg-background/60 transition-colors">
             <div className="flex justify-between items-start mb-1">
-              <span className="font-bold text-sm">{item.shortName || item.symbol}</span>
+              <span className="font-bold text-sm truncate">{item.shortName || item.symbol}</span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold tabular-nums">
@@ -54,15 +54,15 @@ export function MarketSummaryWidget({ data }: { data: any }) {
   );
 
   return (
-    <Card className="h-full flex flex-col dark:bg-card overflow-hidden">
+    <Card className="h-[400px] flex flex-col dark:bg-card overflow-hidden">
       {/* Status Bar */}
       <div className={`px-4 py-2 text-xs font-medium uppercase tracking-wider flex items-center justify-center gap-2 ${status.open ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800/50 text-zinc-400'}`}>
         {status.open ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
         {status.label}
       </div>
 
-      <Tabs defaultValue="commodities" className="flex-1 flex flex-col">
-        <div className="px-4 pt-3">
+      <Tabs defaultValue="commodities" className="flex-1 min-h-0 flex flex-col">
+        <div className="px-4 pt-3 shrink-0">
           <TabsList className="w-full bg-background/50 backdrop-blur">
             <TabsTrigger value="crypto" className="flex-1 text-xs">Crypto</TabsTrigger>
             <TabsTrigger value="rates" className="flex-1 text-xs">Rates</TabsTrigger>
@@ -71,7 +71,7 @@ export function MarketSummaryWidget({ data }: { data: any }) {
           </TabsList>
         </div>
 
-        <div className="flex-1 overflow-y-auto max-h-[400px]">
+        <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-secondary px-1">
           <TabsContent value="crypto" className="mt-0 h-full"><QuoteGrid items={data.crypto || []} /></TabsContent>
           <TabsContent value="rates" className="mt-0 h-full"><QuoteGrid items={data.rates || []} /></TabsContent>
           <TabsContent value="commodities" className="mt-0 h-full"><QuoteGrid items={data.commodities || []} /></TabsContent>

@@ -39,7 +39,17 @@ function SortableItem({ id, children, className }: { id: string; children: React
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={className}>
+    <div ref={setNodeRef} style={style} className={`${className} group relative`}>
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute top-3 right-3 z-20 p-1.5 rounded-md hover:bg-secondary opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/50">
+          <circle cx="9" cy="12" r="1" /><circle cx="9" cy="5" r="1" /><circle cx="9" cy="19" r="1" />
+          <circle cx="15" cy="12" r="1" /><circle cx="15" cy="5" r="1" /><circle cx="15" cy="19" r="1" />
+        </svg>
+      </div>
       {children}
     </div>
   );
@@ -119,7 +129,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
 
   if (!isLoaded) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
         {["market-summary", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
           <div key={id} className="w-full">
             {renderWidget(id)}
@@ -137,7 +147,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           {items.map((id) => (
             <SortableItem key={id} id={id} className="w-full">
               {renderWidget(id)}
