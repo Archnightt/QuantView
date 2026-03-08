@@ -5,23 +5,23 @@ import { fetchWithCache } from "@/lib/redis";
 export async function getStockDetails(symbol: string) {
   return fetchWithCache(`stock:details:${symbol.toUpperCase()}`, async () => {
     try {
-      // Instantiate manually to satisfy the library requirements in this environment
-      // @ts-ignore
-      const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
-      
-      const queryOptions = { 
-        modules: ['price', 'summaryDetail', 'financialData', 'defaultKeyStatistics'] 
+      const yf = new ((yahooFinance as any).default || yahooFinance)({
+        suppressNotices: ['yahooSurvey']
+      });
+
+      const queryOptions = {
+        modules: ['price', 'summaryDetail', 'financialData', 'defaultKeyStatistics']
       };
-      
+
       // Fetch detailed modules
       // FIX: Cast queryOptions to any to bypass strict typing issues with the modules array
       const result = await yf.quoteSummary(symbol, queryOptions as any);
-      
+
       // Fetch Specific Company News (Rich Media)
       const newsResult = await yf.search(symbol, { newsCount: 5, quotesCount: 0 });
-      
+
       const data = result as any;
-      
+
       return {
         symbol,
         price: data.price?.regularMarketPrice?.raw || data.price?.regularMarketPrice || 0,
@@ -50,7 +50,7 @@ export async function getStockDetails(symbol: string) {
           link: item.link,
           providerPublishTime: item.providerPublishTime,
           thumbnail: item.thumbnail,
-          summary: item.summary || item.snippet || "" 
+          summary: item.summary || item.snippet || ""
         }))
       };
     } catch (error) {

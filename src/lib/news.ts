@@ -16,8 +16,9 @@ export interface NewsItem {
 export async function getFullNewsFeed(count: number = 20, query: string = 'US Markets'): Promise<NewsItem[]> {
   return fetchWithCache(`news:feed:${query}:${count}`, async () => {
     try {
-      // @ts-ignore
-      const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
+      const yf = new ((yahooFinance as any).default || yahooFinance)({
+        suppressNotices: ['yahooSurvey']
+      });
 
       // Perform multiple parallel searches to ensure we get enough items (Yahoo often caps at 10 per query)
       // We request more than needed to handle deduplication and API limits

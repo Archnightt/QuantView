@@ -3,7 +3,9 @@ import { getCurrencySymbol } from "@/lib/utils";
 import { fetchWithCache } from "@/lib/redis";
 
 // 1. Initialize the library instance
-const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
+const yf = new ((YahooFinance as any).default || YahooFinance)({
+	suppressNotices: ['yahooSurvey']
+});
 
 export interface MarketData {
 	symbol: string;
@@ -71,31 +73,31 @@ export const MarketService = {
 		return results.filter((r) => r !== null) as MarketData[];
 	},
 
-  /**
-   * Fetches DEEP financial context for AI generation.
-   * This retrieves heavy modules like Insider Transactions, Earnings, and Recommendations.
-   */
-  async getDeepMarketData(symbol: string, bypassCache = false) {
-    return fetchWithCache(`market:deep:${symbol.toUpperCase()}`, async () => {
-      try {
-        const queryOptions = {
-          modules: [
-            'financialData',          // Margins, Targets
-            'defaultKeyStatistics',   // P/E, Beta
-            'recommendationTrend',    // Analyst Ratings
-            'earnings',               // Earnings History
-            'insiderTransactions',    // Insider Buying/Selling
-            'upgradeDowngradeHistory', // Recent Analyst Actions
-            'summaryProfile'          // Website/Address (for Logo)
-          ]
-        };
-        // @ts-ignore
-        const result = await yf.quoteSummary(symbol, queryOptions);
-        return result;
-      } catch (error) {
-        console.error(`Failed to fetch deep data for ${symbol}:`, error);
-        return null;
-      }
-    }, 3600, { bypassCache }); // Cache for 1 Hour (Data changes slowly)
-  }
+	/**
+	 * Fetches DEEP financial context for AI generation.
+	 * This retrieves heavy modules like Insider Transactions, Earnings, and Recommendations.
+	 */
+	async getDeepMarketData(symbol: string, bypassCache = false) {
+		return fetchWithCache(`market:deep:${symbol.toUpperCase()}`, async () => {
+			try {
+				const queryOptions = {
+					modules: [
+						'financialData',          // Margins, Targets
+						'defaultKeyStatistics',   // P/E, Beta
+						'recommendationTrend',    // Analyst Ratings
+						'earnings',               // Earnings History
+						'insiderTransactions',    // Insider Buying/Selling
+						'upgradeDowngradeHistory', // Recent Analyst Actions
+						'summaryProfile'          // Website/Address (for Logo)
+					]
+				};
+				// @ts-ignore
+				const result = await yf.quoteSummary(symbol, queryOptions);
+				return result;
+			} catch (error) {
+				console.error(`Failed to fetch deep data for ${symbol}:`, error);
+				return null;
+			}
+		}, 3600, { bypassCache }); // Cache for 1 Hour (Data changes slowly)
+	}
 };

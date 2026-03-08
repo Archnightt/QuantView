@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ['yahoo-finance2'],
 };
 
 export default nextConfig;

@@ -5,8 +5,9 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 async function getIndicesData() {
   const symbols = ['^GSPC', '^IXIC', '^DJI', '^NSEI', '^BSESN'];
   try {
-    // @ts-ignore
-    const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
+    const yf = new ((yahooFinance as any).default || yahooFinance)({
+      suppressNotices: ['yahooSurvey']
+    });
 
     // Fetch quotes and sparklines in parallel
     const promises = symbols.map(async (sym) => {

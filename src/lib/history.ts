@@ -10,7 +10,7 @@ type Range = '1d' | '5d' | '1mo' | '6mo' | 'ytd' | '1y' | '5y';
 
 export async function getStockHistory(symbol: string, range: Range = '1mo'): Promise<StockHistory[]> {
   const cacheKey = `v2:stock:history:${symbol.toUpperCase()}:${range}`;
-  
+
   // Dynamic TTL based on range
   let ttl = 3600; // default 1 hour
   if (range === '1d') ttl = 300; // 5 mins
@@ -32,23 +32,23 @@ export async function getStockHistory(symbol: string, range: Range = '1mo'): Pro
 
       switch (range) {
         case '1d':
-           // Fetching last 2 days to ensure we get "today's" intraday data even across UTC boundaries or weekends
-           // But actually period1 is the START time.
-           // For 1d, usually we want from market open. 
-           // Yahoo finance chart often handles "1d" range automatically if we don't pass period1/2 strictly?
-           // The library requires period1. 
-           // Let's do 24h ago or from last close? 
-           // "1d" usually implies "Today".
-           start.setDate(start.getDate() - 2); // Go back a bit to catch open
-           interval = '5m';
-           break;
+          // Fetching last 2 days to ensure we get "today's" intraday data even across UTC boundaries or weekends
+          // But actually period1 is the START time.
+          // For 1d, usually we want from market open. 
+          // Yahoo finance chart often handles "1d" range automatically if we don't pass period1/2 strictly?
+          // The library requires period1. 
+          // Let's do 24h ago or from last close? 
+          // "1d" usually implies "Today".
+          start.setDate(start.getDate() - 2); // Go back a bit to catch open
+          interval = '5m';
+          break;
         case '5d':
           start.setDate(start.getDate() - 7); // 5 trading days approx 7 calendar days
           interval = '15m';
           break;
         case '1mo':
           start.setMonth(start.getMonth() - 1);
-          interval = '1d'; 
+          interval = '1d';
           break;
         case '6mo':
           start.setMonth(start.getMonth() - 6);
@@ -72,24 +72,25 @@ export async function getStockHistory(symbol: string, range: Range = '1mo'): Pro
           interval = '1d';
       }
 
-      // @ts-ignore
-      const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
+      const yf = new ((yahooFinance as any).default || yahooFinance)({
+        suppressNotices: ['yahooSurvey']
+      });
 
       const result = await yf.chart(symbol, {
-        period1: start, 
+        period1: start,
         interval,
       });
 
       if (!result || !result.quotes) return [];
 
       let quotes = result.quotes;
-      
+
       // Filter for strictly the requested range if needed?
       // Yahoo usually returns data starting from period1. 
       // For '1d', we might get 2 days if we asked for 2. 
       // Let's filter on the client side (UI) or just return what we have.
       // Ideally for 1d we only want "today" or "latest trading session".
-      
+
       return quotes.map((day: any) => {
         // Handle date parsing safely
         const dateObj = new Date(day.date);

@@ -21,9 +21,9 @@ export interface ComparisonData {
 
 async function fetchStockData(symbol: string) {
   try {
-    // Instantiate manually to satisfy the library requirements in this environment
-    // @ts-ignore
-    const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
+    const yf = new ((yahooFinance as any).default || yahooFinance)({
+      suppressNotices: ['yahooSurvey']
+    });
 
     const queryOptions = {
       modules: ["price", "summaryDetail", "defaultKeyStatistics", "financialData"],
@@ -36,10 +36,10 @@ async function fetchStockData(symbol: string) {
     // Parallelize the two requests for this single stock
     const [quoteSummary, chartHistory] = await Promise.all([
       yf.quoteSummary(symbol, queryOptions as any),
-      yf.chart(symbol, { 
+      yf.chart(symbol, {
         period1: startDate,
         period2: endDate,
-        interval: "1d" 
+        interval: "1d"
       }),
     ]);
 
@@ -77,7 +77,7 @@ export async function getComparisonData(
     quotes.forEach((q: any) => {
       // Skip if no close price (some days might have nulls)
       if (!q.close || !q.date) return;
-      
+
       const dateStr = new Date(q.date).toISOString().split("T")[0]; // YYYY-MM-DD
       const pctChange = ((q.close - startPrice) / startPrice) * 100;
 
@@ -107,10 +107,10 @@ export async function getComparisonData(
       compactDisplay: "short",
     }).format(num);
   };
-  
+
   const formatCurrency = (num: number | undefined, currency: string = "USD") => {
-      if (num === undefined || num === null) return "N/A";
-       return new Intl.NumberFormat("en-US", {
+    if (num === undefined || num === null) return "N/A";
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency,
       maximumFractionDigits: 2,
@@ -133,7 +133,7 @@ export async function getComparisonData(
     {
       label: "Market Cap",
       path: (d: any) => d.summaryDetail?.marketCap,
-      formatter: formatCurrency, 
+      formatter: formatCurrency,
     },
     {
       label: "P/E Ratio",
@@ -153,7 +153,7 @@ export async function getComparisonData(
     {
       label: "52W High",
       path: (d: any) => d.summaryDetail?.fiftyTwoWeekHigh,
-       formatter: formatCurrency,
+      formatter: formatCurrency,
     },
   ];
 

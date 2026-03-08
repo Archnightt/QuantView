@@ -12,9 +12,7 @@ const MARKET_GROUPS = {
 
 async function fetchDashboardData() {
   try {
-    // @ts-ignore
-    const yf = new yahooFinance({
-      validation: { logErrors: false },
+    const yf = new ((yahooFinance as any).default || yahooFinance)({
       suppressNotices: ['yahooSurvey']
     });
 
