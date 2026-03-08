@@ -24,6 +24,7 @@ import { NewsWidget } from "@/components/NewsWidget";
 import { MarketSummaryWidget } from "@/components/MarketSummaryWidget";
 import { MoversWidget } from "@/components/MoversWidget";
 import { EconomicCalendarWidget } from "@/components/EconomicCalendarWidget";
+import { WorldIndicesWidget } from "@/components/WorldIndicesWidget";
 import { StockHistory } from "@/lib/history";
 import { HeroChart } from "@/components/HeroChart";
 
@@ -69,12 +70,14 @@ interface DashboardProps {
     heroName: string;
     news: any[];
     marketSummary?: any;
+    worldIndices?: { america: any[], europe: any[], asia: any[] };
   };
 }
 
 export function DraggableDashboard({ serverData }: DashboardProps) {
-  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v4", [
+  const [items, setItems, isLoaded] = useLocalStorage("dashboard-grid-order-v5", [
     "market-summary",
+    "world-indices",
     "movers",
     "economic-calendar",
     "sectors",
@@ -105,6 +108,8 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       case "market-summary":
       case "trending":
         return <MarketSummaryWidget data={serverData.marketSummary || {}} />;
+      case "world-indices":
+        return <WorldIndicesWidget data={serverData.worldIndices || { america: [], europe: [], asia: [] }} />;
       case "movers":
         return <MoversWidget gainers={serverData.gainers} losers={serverData.losers} />;
       case "economic-calendar":
@@ -130,7 +135,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
   if (!isLoaded) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-        {["market-summary", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
+        {["market-summary", "world-indices", "movers", "economic-calendar", "sectors", "sentiment"].map((id) => (
           <div key={id} className="w-full">
             {renderWidget(id)}
           </div>

@@ -8,7 +8,12 @@ const MARKET_GROUPS = {
   crypto: ['BTC-USD', 'ETH-USD', 'SOL-USD', 'DOGE-USD'],
   rates: ['^TNX', '^TYX', '^FVX', '^IRX'], // 10y, 30y, 5y, 13wk Treasuries
   commodities: ['CL=F', 'GC=F', 'SI=F', 'NG=F', 'HG=F', 'ZC=F'], // Crude, Gold, Silver, Nat Gas, Copper, Corn
-  currencies: ['EURUSD=X', 'JPY=X', 'GBPUSD=X', 'INR=X']
+  currencies: ['EURUSD=X', 'JPY=X', 'GBPUSD=X', 'INR=X'],
+  worldIndices: {
+    america: ['^GSPC', '^DJI', '^IXIC', '^GSPTSE', '^BVSP', '^MXX'],
+    europe: ['^GDAXI', '^FTSE', '^FCHI', '^STOXX50E', '^IBEX', '^FTSEMIB.MI'],
+    asia: ['^N225', '^HSI', '^STI', '^NSEI', '^SSEC', '^AXJO']
+  }
 };
 
 async function fetchDashboardData() {
@@ -33,9 +38,17 @@ async function fetchDashboardData() {
       ...MARKET_GROUPS.currencies
     ];
 
-    // A. Quotes (Sectors + Market Summary)
+    // Comprehensive Index symbols
+    const allWorldIndices = [
+      ...MARKET_GROUPS.worldIndices.america,
+      ...MARKET_GROUPS.worldIndices.europe,
+      ...MARKET_GROUPS.worldIndices.asia
+    ];
+
+    // A. Quotes (Sectors + Market Summary + World Indices)
     const sectorsPromise = yf.quote(sectorSymbols);
     const summaryPromise = yf.quote(summarySymbols);
+    const worldIndicesPromise = yf.quote(allWorldIndices);
 
     // B. Sector Sparklines
     const endDate = new Date();
@@ -87,7 +100,7 @@ async function fetchDashboardData() {
     const heroPromise = getStockHistory(heroSymbol, '1mo');
 
     // 3. Resolve All
-    const [sectors, rawSummary, sparklines, vix, trendingResult, gainersResult, losersResult, news, heroHistory, calendar] = await Promise.all([
+    const [sectors, rawSummary, sparklines, vix, trendingResult, gainersResult, losersResult, news, heroHistory, calendar, rawWorldIndices] = await Promise.all([
       sectorsPromise,
       summaryPromise,
       sparklinesPromise,
@@ -97,7 +110,8 @@ async function fetchDashboardData() {
       losersPromise,
       newsPromise,
       heroPromise,
-      calendarPromise
+      calendarPromise,
+      worldIndicesPromise
     ]);
 
     // 4. Process Data
@@ -128,9 +142,16 @@ async function fetchDashboardData() {
     const gainers = (gainersResult as any)?.quotes || (Array.isArray(gainersResult) ? gainersResult : []);
     const losers = (losersResult as any)?.quotes || (Array.isArray(losersResult) ? losersResult : []);
 
+    const worldIndices = {
+      america: rawWorldIndices.filter((q: any) => MARKET_GROUPS.worldIndices.america.includes(q.symbol)),
+      europe: rawWorldIndices.filter((q: any) => MARKET_GROUPS.worldIndices.europe.includes(q.symbol)),
+      asia: rawWorldIndices.filter((q: any) => MARKET_GROUPS.worldIndices.asia.includes(q.symbol)),
+    };
+
     return {
       sectors: enhancedSectors,
       marketSummary,
+      worldIndices,
       vix: vix ? vix[0] : null,
       trending: trendingQuotes,
       gainers: gainers.slice(0, 10),
@@ -147,6 +168,7 @@ async function fetchDashboardData() {
     return {
       sectors: [],
       marketSummary: { crypto: [], rates: [], commodities: [], currencies: [] },
+      worldIndices: { america: [], europe: [], asia: [] },
       vix: null,
       trending: [],
       gainers: [],
