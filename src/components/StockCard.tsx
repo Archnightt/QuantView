@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, RefreshCw, Pin, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Pin, Sparkles } from "lucide-react";
 import { DeleteButton } from "./DeleteButton";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -41,26 +41,16 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
 
     let intervalId: NodeJS.Timeout;
     let attempts = 0;
-    const maxAttempts = 15; // 30 seconds total
+    const maxAttempts = 15;
 
     const poll = async () => {
       attempts++;
       try {
-        // We use the refresh endpoint but WITHOUT forceUpdate=true to just GET the current status
-        // Wait, the refresh endpoint ALWAYS triggers ingestTicker(symbol, true).
-        // Let's just check if we can get the stock data another way or if we should just wait.
-        // Actually, we can just use router.refresh() and rely on the Server Component 
-        // providing the new data, but we need to know when to stop polling.
-        
-        // BETTER: Let's fetch from the DB via a new simple API or just use the current stock from props.
-        // Since we are in a Client Component, we can't easily read DB directly.
-        // Let's use the search API if it exists or just wait for the background task.
-        
         const res = await fetch(`/api/stocks/refresh`, {
           method: 'POST',
           body: JSON.stringify({ symbol: stock.symbol })
         });
-        
+
         if (res.ok) {
           const updated = await res.json();
           if (updated && !updated.narrative.includes("Analysis pending")) {
@@ -78,14 +68,14 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
       }
     };
 
-    intervalId = setInterval(poll, 2000); // Poll every 2 seconds
+    intervalId = setInterval(poll, 2000);
     return () => clearInterval(intervalId);
   }, [isPending, stock.symbol, router]);
 
   const handlePin = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     try {
       await fetch('/api/stocks/feature', {
         method: 'POST',
@@ -98,52 +88,81 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group h-full">
       <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
         <DeleteButton symbol={stock.symbol} />
       </div>
       <Link href={`/stocks/${stock.symbol}`} className="block h-full">
-        <Card className={`h-full cursor-pointer transition-all hover:bg-secondary/80 ${stock.isFeatured ? 'bg-primary/5 border-primary/20 ring-1 ring-primary/20' : 'bg-card'}`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card
+          className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 overflow-hidden ${isPositive ? 'gain-bar glow-gain' : 'loss-bar glow-loss'
+            } ${stock.isFeatured ? 'ring-1 ring-brand/40 border-brand/20' : ''}`}
+        >
+          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 pt-4 px-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 {stock.imageUrl && (
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white shadow-sm ring-1 ring-border">
-                    <Image 
-                      src={stock.imageUrl} 
-                      alt={stock.symbol} 
+                  <div className="relative w-7 h-7 rounded-full overflow-hidden bg-white shadow-sm ring-1 ring-border shrink-0">
+                    <Image
+                      src={stock.imageUrl}
+                      alt={stock.symbol}
                       fill
-                      className="object-contain p-1"
-                      sizes="32px"
+                      className="object-contain p-0.5"
+                      sizes="28px"
                     />
                   </div>
                 )}
-                <CardTitle className="text-xl font-bold">{stock.symbol}</CardTitle>
-                {stock.isFeatured && <Pin className="w-3 h-3 text-primary fill-current" />}
+                {/* Ticker in monospace */}
+                <span className="font-mono text-base font-bold tracking-tight leading-none">
+                  {stock.symbol}
+                </span>
+                {stock.isFeatured && (
+                  <Pin className="w-3 h-3 text-brand fill-current shrink-0" />
+                )}
               </div>
-              <p className="text-sm text-muted-foreground">{stock.name}</p>
+              <p className="text-xs text-muted-foreground font-sans leading-snug line-clamp-1 max-w-[140px]">
+                {stock.name}
+              </p>
             </div>
-            <Badge 
-              variant={isPositive ? "default" : "destructive"} 
-              className={`px-2 py-1 text-sm ${isPositive ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
+
+            {/* Change badge */}
+            <Badge
+              variant="outline"
+              className={`shrink-0 tabular px-2 py-1 text-xs font-mono font-semibold border-0 ${isPositive
+                  ? 'bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/15 dark:text-emerald-400'
+                  : 'bg-red-500/10 text-red-500 dark:bg-red-500/15 dark:text-red-400'
+                }`}
             >
-              {isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-              {stock.change.toFixed(2)}%
+              {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
+              {isPositive ? '+' : ''}{stock.change.toFixed(2)}%
             </Badge>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-4">{currencySymbol}{stock.price.toFixed(2)}</div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between w-full text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${stock.narrative && stock.narrative !== "Analyst unavailable." ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
-                  AI Narrative
+
+          <CardContent className="px-4 pb-4">
+            {/* Price — display serif for hero number */}
+            <div className="font-display text-3xl leading-tight text-foreground mb-4 tabular">
+              <span className="text-lg font-sans font-normal text-muted-foreground mr-0.5">{currencySymbol}</span>
+              {stock.price.toFixed(2)}
+            </div>
+
+            {/* AI Narrative Section */}
+            <div className="rounded-lg overflow-hidden" style={{ background: 'hsl(var(--narrative-bg))' }}>
+              {/* Narrative Header */}
+              <div className="flex items-center justify-between px-3 pt-2.5 pb-1.5">
+                <div className="flex items-center gap-1.5">
+                  {/* Pulsing amber dot */}
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${stock.narrative && stock.narrative !== "Analyst unavailable."
+                      ? "bg-brand ai-pulse-dot"
+                      : "bg-muted-foreground/40"
+                    }`} />
+                  <Sparkles className="w-3 h-3 text-brand/70" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground font-sans">
+                    AI Narrative
+                  </span>
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={handlePin}
-                    className={`p-1 transition-colors ${stock.isFeatured ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                    className={`p-1 rounded transition-colors ${stock.isFeatured ? 'text-brand' : 'text-muted-foreground hover:text-brand'}`}
                     title={stock.isFeatured ? "Featured on Dashboard" : "Pin to Dashboard"}
                   >
                     <Pin className={`w-3 h-3 ${stock.isFeatured ? 'fill-current' : ''}`} />
@@ -151,32 +170,34 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
                   <button
                     disabled={isRefreshing}
                     onClick={async (e) => {
-                      e.preventDefault(); // Prevent Link navigation
-                      e.stopPropagation(); // Stop event bubbling
+                      e.preventDefault();
+                      e.stopPropagation();
                       setIsRefreshing(true);
-                      
+
                       await fetch('/api/stocks/refresh', {
                         method: 'POST',
                         body: JSON.stringify({ symbol: stock.symbol })
                       });
-                      
+
                       setIsRefreshing(false);
-                      router.refresh(); // Refresh UI to show new narrative
+                      router.refresh();
                     }}
-                    className="p-1 text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+                    className="p-1 rounded text-muted-foreground hover:text-brand transition-colors disabled:opacity-50"
                     title="Regenerate Narrative"
                   >
                     <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
                   </button>
                 </div>
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-5 italic">
+
+              {/* Narrative Body — lighter sans-serif, italic */}
+              <div className="px-3 pb-3 text-[12.5px] font-sans font-light italic text-muted-foreground leading-relaxed line-clamp-4 tracking-[0.01em]">
                 {isPending ? (
-                  <div className="space-y-2 py-1">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-[90%]" />
-                    <Skeleton className="h-4 w-[95%]" />
-                    <Skeleton className="h-4 w-[40%]" />
+                  <div className="space-y-1.5 py-0.5">
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-[90%]" />
+                    <Skeleton className="h-3 w-[95%]" />
+                    <Skeleton className="h-3 w-[40%]" />
                   </div>
                 ) : (
                   `"${stock.narrative || "Analyst unavailable."}"`

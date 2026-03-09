@@ -7,7 +7,6 @@ import {
     Newspaper,
     LineChart,
     Settings,
-    Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -48,18 +47,22 @@ export function TopNav() {
     const logoSrc = mounted && resolvedTheme === "dark" ? "/dark-logo.webp" : "/logo.webp";
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/60 backdrop-blur-xl">
-            <div className="max-w-[98%] mx-auto px-4 h-16 flex items-center justify-between gap-4">
+        <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-border/60"
+            style={{ borderBottom: '1px solid hsl(var(--border) / 0.6)', boxShadow: '0 1px 0 0 hsl(var(--brand) / 0.35), 0 2px 12px 0 rgb(0 0 0 / 0.12)' }}>
+            {/* Brand accent line at the very top */}
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--brand)) 0%, hsl(var(--brand) / 0.3) 60%, transparent 100%)' }} />
+
+            <div className="max-w-[98%] mx-auto px-4 h-[60px] flex items-center justify-between gap-4">
 
                 {/* Left: Logo & Navigation */}
                 <div className="flex items-center gap-8">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <div className="relative w-40 h-10">
+                    <Link href="/" className="flex items-center gap-3 group shrink-0">
+                        <div className="relative w-36 h-9">
                             {mounted && (
                                 <Image
                                     fill
-                                    alt="Logo"
+                                    alt="QuantView Logo"
                                     src={logoSrc}
                                     className="object-contain"
                                     priority
@@ -69,7 +72,7 @@ export function TopNav() {
                     </Link>
 
                     {/* Nav Links */}
-                    <div className="hidden md:flex items-center gap-1 bg-secondary/20 p-1 rounded-xl border border-white/5">
+                    <div className="hidden md:flex items-center gap-0.5">
                         {routes.map((route) => {
                             const isActive = pathname === route.href;
                             return (
@@ -77,13 +80,13 @@ export function TopNav() {
                                     key={route.href}
                                     href={route.href}
                                     className={cn(
-                                        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
+                                        "flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] font-medium tracking-tight transition-all duration-200",
                                         isActive
-                                            ? "bg-background text-primary shadow-sm border border-white/5"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                                            ? "bg-brand/10 text-brand dark:text-brand border border-brand/20"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                                     )}
                                 >
-                                    <route.icon className="h-4 w-4" />
+                                    <route.icon className="h-3.5 w-3.5 shrink-0" />
                                     {route.label}
                                 </Link>
                             );
@@ -91,9 +94,10 @@ export function TopNav() {
                     </div>
                 </div>
 
-                {/* Right: Actions / Search / Settings */}
-                <div className="flex items-center gap-4 flex-1 justify-end max-w-xl">
-                    <div className="flex-1 hidden sm:block">
+                {/* Right: Search / Settings */}
+                <div className="flex items-center gap-3 flex-1 justify-end max-w-2xl">
+                    {/* Wider Bloomberg-style search */}
+                    <div className="flex-1 hidden sm:block max-w-lg">
                         <StockSearch />
                     </div>
 
@@ -101,10 +105,10 @@ export function TopNav() {
                         <PopoverTrigger asChild>
                             <Button
                                 variant="ghost"
-                                className="shrink-0 items-center gap-2 rounded-full border border-white/10 bg-background/50 hover:bg-accent hover:text-accent-foreground text-muted-foreground transition-all px-4"
+                                className="shrink-0 items-center gap-2 rounded-full border border-border/60 bg-secondary/40 hover:bg-secondary hover:border-brand/30 text-muted-foreground hover:text-foreground transition-all px-3.5 text-[13px] h-9"
                             >
-                                <span className="text-sm font-medium">Theme</span>
-                                <Settings className="h-4 w-4" />
+                                <Settings className="h-3.5 w-3.5" />
+                                <span className="font-medium">Theme</span>
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent

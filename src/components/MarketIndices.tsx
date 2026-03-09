@@ -1,5 +1,4 @@
 import yahooFinance from 'yahoo-finance2';
-import { Card } from "@/components/ui/card";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 async function getIndicesData() {
@@ -9,10 +8,8 @@ async function getIndicesData() {
       suppressNotices: ['yahooSurvey']
     });
 
-    // Fetch quotes and sparklines in parallel
     const promises = symbols.map(async (sym) => {
       try {
-        // Calculate dates for 5-day history
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 5);
@@ -47,8 +44,8 @@ function Sparkline({ data, color }: { data: number[], color: string }) {
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
-  const width = 100;
-  const height = 30;
+  const width = 80;
+  const height = 28;
 
   const points = data.map((val, i) => {
     const x = (i / (data.length - 1)) * width;
@@ -61,7 +58,7 @@ function Sparkline({ data, color }: { data: number[], color: string }) {
       <polyline
         fill="none"
         stroke={color}
-        strokeWidth="2"
+        strokeWidth="1.5"
         points={points}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -87,48 +84,52 @@ export async function MarketIndices() {
   };
 
   return (
-    <div className="flex flex-row gap-4 overflow-x-auto pb-4 mb-2 w-full no-scrollbar px-1">
+    <div className="flex flex-row gap-3 overflow-x-auto pb-2 w-full no-scrollbar">
       {indices.map((item) => {
         const { symbol, quote, chart } = item!;
         const price = quote.regularMarketPrice || 0;
         const change = quote.regularMarketChange || 0;
         const changePercent = quote.regularMarketChangePercent || 0;
         const isPositive = change >= 0;
-        const color = isPositive ? "#10b981" : "#ef4444"; // emerald-500 : red-500
+        const color = isPositive ? "#10b981" : "#ef4444";
 
-        // Extract closes for sparkline
         const sparkData = (chart as any)?.quotes?.map((q: any) => q.close).filter((c: any) => c) || [];
 
         return (
-          <Card
+          <div
             key={symbol}
-            className="min-w-[200px] flex-1 p-4 bg-card hover:shadow-md transition-all duration-200 shrink-0 border-border"
+            className={`min-w-[190px] flex-1 shrink-0 rounded-xl border border-border/60 bg-card hover:shadow-md transition-all duration-200 p-3.5 overflow-hidden relative ${isPositive ? 'glow-gain' : 'glow-loss'}`}
           >
-            <div className="flex justify-between items-start mb-2">
+            {/* Left accent bar */}
+            <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl ${isPositive ? 'bg-emerald-500' : 'bg-red-500'}`} />
+
+            <div className="flex justify-between items-start mb-2 pl-1">
               <div>
-                <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                <div className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest mb-1">
                   {getName(symbol)}
                 </div>
-                <div className="text-lg font-bold mt-1 text-foreground">
+                {/* Price in display serif */}
+                <div className="font-display text-xl leading-tight tabular text-foreground">
                   {price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </div>
               </div>
-              <div className={`flex flex-col items-end text-xs font-medium ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-                <span className="flex items-center">
-                  {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
+              {/* % change in mono */}
+              <div className={`flex flex-col items-end text-xs font-mono font-semibold leading-tight tabular ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
+                <span className="flex items-center gap-0.5">
+                  {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                   {changePercent.toFixed(2)}%
                 </span>
-                <span className="opacity-80">
+                <span className="text-[10px] opacity-80 mt-0.5">
                   {change > 0 ? '+' : ''}{change.toFixed(2)}
                 </span>
               </div>
             </div>
 
-            {/* Sparkline Area */}
-            <div className="h-8 w-full mt-2 opacity-80">
+            {/* Sparkline */}
+            <div className="h-7 w-full pl-1 opacity-75">
               <Sparkline data={sparkData} color={color} />
             </div>
-          </Card>
+          </div>
         );
       })}
     </div>

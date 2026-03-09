@@ -36,40 +36,56 @@
     --radius: 0.75rem;
 
     --chart-main: 142 76% 36%;
+
+    /* Brand accent — warm gold/amber */
+    --brand: 38 92% 50%;
+    --brand-foreground: 0 0% 4%;
+
+    /* AI section background */
+    --ai-bg: 224 30% 97%;
+    --narrative-bg: 224 20% 94%;
   }
 
   .dark {
     /* --- Dark Mode (High Contrast Deep) --- */
-    --background: 0 0% 3.5%;  
+    --background: 222 20% 7%;
     --foreground: 0 0% 98%;
     
-    --card: 0 0% 11%;       
+    --card: 222 18% 11%;
     --card-foreground: 0 0% 98%;
     
-    --popover: 0 0% 11%;    
+    --popover: 222 18% 11%;
     --popover-foreground: 0 0% 98%;
     
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 3.5%;
     
-    --secondary: 0 0% 15%;  
+    --secondary: 222 18% 16%;
     --secondary-foreground: 0 0% 98%;
     
-    --muted: 0 0% 15%;
+    --muted: 222 18% 16%;
     --muted-foreground: 240 5% 64.9%;
     
-    --accent: 0 0% 15%;
+    --accent: 222 18% 16%;
     --accent-foreground: 0 0% 98%;
     
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     
     /* Distinct borders to prevent "melting" */
-    --border: 0 0% 15%; 
-    --input: 0 0% 15%;
+    --border: 222 18% 18%;
+    --input: 222 18% 18%;
     --ring: 240 4.9% 83.9%;
     
     --chart-main: 142 70% 50%;
+
+    /* Brand accent — warm gold/amber (same across modes) */
+    --brand: 38 92% 50%;
+    --brand-foreground: 0 0% 4%;
+
+    /* AI section background — slightly different from card */
+    --ai-bg: 224 22% 14%;
+    --narrative-bg: 224 26% 12%;
   }
 }
 
@@ -79,5 +95,70 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+
+  /* Font utility classes */
+  .font-display {
+    font-family: var(--font-display), Georgia, serif;
+  }
+  .font-mono {
+    font-family: var(--font-mono), 'Courier New', monospace;
+  }
+  .font-sans {
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Scrollbar hiding */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Brand accent top-bar */
+  .brand-top-bar {
+    border-top: 2px solid hsl(var(--brand));
+  }
+
+  /* Left-edge accent bar for watchlist cards */
+  .gain-bar {
+    border-left: 3px solid hsl(142, 70%, 50%);
+  }
+  .loss-bar {
+    border-left: 3px solid hsl(0, 65%, 55%);
+  }
+
+  /* Subtle ambient glow behind positive/negative stocks */
+  .glow-gain {
+    box-shadow: inset 0 0 40px 0 hsl(142 70% 50% / 0.05);
+  }
+  .glow-loss {
+    box-shadow: inset 0 0 40px 0 hsl(0 65% 55% / 0.05);
+  }
+
+  /* AI pulsing indicator */
+  @keyframes ai-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px 2px hsl(var(--brand) / 0.6); }
+    50% { opacity: 0.5; box-shadow: 0 0 2px 0px hsl(var(--brand) / 0.2); }
+  }
+  .ai-pulse-dot {
+    animation: ai-pulse 2s ease-in-out infinite;
+  }
+
+  /* Progress bar keyframe for news widget */
+  @keyframes progress {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  /* Tabular numbers for financial data */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Section header accent styling */
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground;
   }
 }

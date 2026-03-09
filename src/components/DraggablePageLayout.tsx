@@ -34,20 +34,24 @@ function SortableSection({ id, title, children }: { id: string, title: string, c
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="mb-10 bg-background rounded-xl border border-border/20 hover:border-border/50 transition-colors p-2 md:p-4">
+    <div ref={setNodeRef} style={style} className="mb-8 bg-background rounded-xl border border-border/20 hover:border-border/40 transition-colors p-2 md:p-4">
       {/* Section Header with Drag Handle */}
       <div className="flex items-center justify-between mb-4 px-2">
-         <div className="flex items-center gap-2 group cursor-grab active:cursor-grabbing" {...attributes} {...listeners}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-secondary cursor-grab">
-               <GripVertical className="w-4 h-4" />
-            </Button>
-            <h2 className="text-xl font-semibold select-none">{title}</h2>
-         </div>
-         <span className="text-xs text-muted-foreground bg-secondary/30 px-2 py-1 rounded hidden md:inline-block">
-           Use handle to reorder section
-         </span>
+        <div className="flex items-center gap-2.5 group cursor-grab active:cursor-grabbing" {...attributes} {...listeners}>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/50 hover:bg-secondary cursor-grab hover:text-muted-foreground">
+            <GripVertical className="w-3.5 h-3.5" />
+          </Button>
+          {/* Brand accent + mono label */}
+          <div className="flex items-center gap-2">
+            <div className="w-[2px] h-4 rounded-full bg-brand" />
+            <h2 className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground select-none">{title}</h2>
+          </div>
+        </div>
+        <span className="text-[10px] font-mono text-muted-foreground/50 bg-secondary/20 px-2 py-1 rounded hidden md:inline-block">
+          drag to reorder
+        </span>
       </div>
-      
+
       {/* The Content */}
       <div className="pl-1 md:pl-2">
         {children}
@@ -57,21 +61,21 @@ function SortableSection({ id, title, children }: { id: string, title: string, c
 }
 
 // --- Main Layout Component ---
-export function DraggablePageLayout({ 
-  watchlist, 
+export function DraggablePageLayout({
+  watchlist,
   overview,
   pinnedChart,
   newsFeed
-}: { 
-  watchlist: React.ReactNode, 
+}: {
+  watchlist: React.ReactNode,
   overview: React.ReactNode,
   pinnedChart: React.ReactNode,
   newsFeed: React.ReactNode
 }) {
   // Updated version to v2 to reset layout with new sections
   const [items, setItems, isLoaded] = useLocalStorage("layout-sections-order-v2", [
-    "pinnedChart", 
-    "watchlist", 
+    "pinnedChart",
+    "watchlist",
     "overview",
     "newsFeed"
   ]);
@@ -119,14 +123,15 @@ export function DraggablePageLayout({
   if (!isLoaded) {
     return (
       <div className="flex flex-col gap-4">
-         {["pinnedChart", "watchlist", "overview", "newsFeed"].map(id => (
-            <div key={id} className="mb-10 bg-background rounded-xl p-2 md:p-4">
-              <div className="flex items-center justify-between mb-4 px-2">
-                <h2 className="text-xl font-semibold select-none">{getTitle(id)}</h2>
-              </div>
-              <div className="pl-1 md:pl-2">{renderSection(id)}</div>
+        {["pinnedChart", "watchlist", "overview", "newsFeed"].map(id => (
+          <div key={id} className="mb-8 bg-background rounded-xl p-2 md:p-4">
+            <div className="flex items-center gap-2 mb-4 px-2">
+              <div className="w-[2px] h-4 rounded-full bg-brand" />
+              <h2 className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground select-none">{getTitle(id)}</h2>
             </div>
-         ))}
+            <div className="pl-1 md:pl-2">{renderSection(id)}</div>
+          </div>
+        ))}
       </div>
     );
   }
