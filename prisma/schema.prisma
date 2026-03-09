@@ -57,3 +57,9 @@ model Source {
   publisher   String
   publishedAt DateTime
 }
+
+model GlobalCache {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @default(now())
+}
