@@ -6,13 +6,12 @@ import {
     LayoutDashboard,
     Newspaper,
     LineChart,
-    Settings,
+    Moon,
+    Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BoostPanel } from "@/components/BoostPanel";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { StockSearch } from "@/components/StockSearch";
@@ -37,7 +36,7 @@ const routes = [
 
 export function TopNav() {
     const pathname = usePathname();
-    const { resolvedTheme } = useTheme();
+    const { resolvedTheme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -101,26 +100,23 @@ export function TopNav() {
                         <StockSearch />
                     </div>
 
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                className="shrink-0 items-center gap-2 rounded-full border border-border/60 bg-secondary/40 hover:bg-secondary hover:border-brand/30 text-muted-foreground hover:text-foreground transition-all px-3.5 text-[13px] h-9"
-                            >
-                                <Settings className="h-3.5 w-3.5" />
-                                <span className="font-medium">Theme</span>
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                            side="bottom"
-                            align="end"
-                            className="w-auto p-0 border-none bg-transparent shadow-none mt-2"
-                        >
-                            <div className="rounded-3xl border border-white/20 bg-white/80 dark:bg-black/80 backdrop-blur-xl shadow-2xl p-5 overflow-hidden">
-                                <BoostPanel />
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+                    {/* Minimal theme cycle button */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                            if (resolvedTheme === "dark") setTheme("light");
+                            else setTheme("dark");
+                        }}
+                        className="shrink-0 h-9 w-9 rounded-full border border-border/60 bg-secondary/40 hover:bg-secondary hover:border-brand/30 text-muted-foreground hover:text-foreground transition-all"
+                        title="Toggle theme"
+                    >
+                        {mounted && (
+                            resolvedTheme === "dark"
+                                ? <Sun className="h-4 w-4" />
+                                : <Moon className="h-4 w-4" />
+                        )}
+                    </Button>
                 </div>
             </div>
         </nav>
