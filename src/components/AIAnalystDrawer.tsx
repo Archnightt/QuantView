@@ -71,10 +71,9 @@ export function AIAnalystDrawer({ symbol, narrative }: AIAnalystDrawerProps) {
     // Format narrative into structured sections
     const formatNarrative = (text: string) => {
         if (!text) return null;
-        // Split by newlines and render paragraph by paragraph
         return text.split('\n').filter(p => p.trim()).map((para, i) => (
             <p key={i} className={cn(
-                "text-[14px] font-sans leading-relaxed text-zinc-300",
+                "text-[14px] font-sans leading-relaxed text-foreground/80",
                 i < text.split('\n').filter(p => p.trim()).length - 1 && "mb-3"
             )}>
                 {para}
@@ -117,47 +116,47 @@ export function AIAnalystDrawer({ symbol, narrative }: AIAnalystDrawerProps) {
                 ref={drawerRef}
                 className={cn(
                     "fixed top-0 right-0 h-full w-full sm:w-[420px] z-50 flex flex-col",
-                    "bg-[#111318] border-l border-white/10",
-                    "shadow-[−20px_0_60px_rgba(0,0,0,0.6)]",
+                    "bg-card border-l border-border",
+                    "shadow-2xl",
                     "transition-transform duration-300 ease-out",
                     isOpen ? "translate-x-0" : "translate-x-full"
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-[#0c0d0f]">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-background">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-[#f0a500]/15 border border-[#f0a500]/30 flex items-center justify-center">
-                            <Sparkles className="w-3.5 h-3.5 text-[#f0a500]" />
+                        <div className="w-7 h-7 rounded-lg bg-brand/15 border border-brand/30 flex items-center justify-center">
+                            <Sparkles className="w-3.5 h-3.5 text-brand" />
                         </div>
                         <div>
-                            <p className="text-[13px] font-mono font-bold text-white">QuantView AI</p>
-                            <p className="text-[10px] font-mono text-zinc-500">Equity Analyst · {symbol}</p>
+                            <p className="text-[13px] font-mono font-bold text-foreground">QuantView AI</p>
+                            <p className="text-[10px] font-mono text-muted-foreground">Equity Analyst · {symbol}</p>
                         </div>
                     </div>
                     <button
                         onClick={() => setIsOpen(false)}
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                     >
                         <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 px-5 py-5 space-y-5">
+                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-border px-5 py-5 space-y-5">
 
-                    {/* Thinking / Streaming state */}
+                    {/* Thinking state */}
                     {isOpen && !isDone && displayedText === "" && (
-                        <div className="flex items-start gap-3 bg-white/5 rounded-xl p-4 border border-white/5">
-                            <div className="w-6 h-6 rounded-full bg-[#f0a500]/20 flex items-center justify-center shrink-0 mt-0.5">
-                                <Loader2 className="w-3.5 h-3.5 text-[#f0a500] animate-spin" />
+                        <div className="flex items-start gap-3 bg-secondary/40 rounded-xl p-4 border border-border">
+                            <div className="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center shrink-0 mt-0.5">
+                                <Loader2 className="w-3.5 h-3.5 text-brand animate-spin" />
                             </div>
                             <div>
-                                <p className="text-[12px] font-mono text-zinc-400 mb-1">Analyzing market data...</p>
+                                <p className="text-[12px] font-mono text-muted-foreground mb-1">Analyzing market data...</p>
                                 <div className="flex gap-1">
                                     {[0, 1, 2].map((i) => (
                                         <span
                                             key={i}
-                                            className="w-1.5 h-1.5 rounded-full bg-[#f0a500]/60 animate-bounce"
+                                            className="w-1.5 h-1.5 rounded-full bg-brand/60 animate-bounce"
                                             style={{ animationDelay: `${i * 150}ms` }}
                                         />
                                     ))}
@@ -170,29 +169,29 @@ export function AIAnalystDrawer({ symbol, narrative }: AIAnalystDrawerProps) {
                     {displayedText && (
                         <div className="space-y-1">
                             <div className="flex items-center gap-1.5 mb-3">
-                                <div className="w-[2px] h-4 rounded-full bg-[#f0a500]" />
-                                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">
+                                <div className="w-[2px] h-4 rounded-full bg-brand" />
+                                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">
                                     Executive Summary
                                 </span>
                                 {isStreaming && (
-                                    <span className="ml-1 inline-block w-[2px] h-[14px] bg-[#f0a500] animate-pulse rounded-sm" />
+                                    <span className="ml-1 inline-block w-[2px] h-[14px] bg-brand animate-pulse rounded-sm" />
                                 )}
                             </div>
                             {formatNarrative(displayedText)}
                         </div>
                     )}
 
-                    {/* Sources (shown when done) */}
+                    {/* Sources */}
                     {isDone && (
                         <div>
-                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-600 mb-2">
+                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">
                                 Data Sources
                             </p>
                             <div className="flex flex-wrap gap-1.5">
                                 {SOURCES.map((s) => (
                                     <span
                                         key={s.label}
-                                        className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-zinc-400 hover:bg-white/10 transition-colors cursor-default"
+                                        className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary/60 border border-border text-[11px] font-mono text-muted-foreground hover:bg-secondary transition-colors cursor-default"
                                     >
                                         {s.icon} {s.label}
                                     </span>
@@ -204,16 +203,16 @@ export function AIAnalystDrawer({ symbol, narrative }: AIAnalystDrawerProps) {
 
                 {/* Footer */}
                 {isDone && (
-                    <div className="px-5 py-4 border-t border-white/10 bg-[#0c0d0f] flex items-center justify-between">
-                        <p className="text-[11px] font-mono text-zinc-600">Was this analysis helpful?</p>
+                    <div className="px-5 py-4 border-t border-border bg-background flex items-center justify-between">
+                        <p className="text-[11px] font-mono text-muted-foreground/60">Was this analysis helpful?</p>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setFeedback("up")}
                                 className={cn(
                                     "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono border transition-all",
                                     feedback === "up"
-                                        ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
-                                        : "border-white/10 text-zinc-500 hover:border-white/20 hover:text-zinc-300"
+                                        ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+                                        : "border-border text-muted-foreground hover:text-foreground"
                                 )}
                             >
                                 <ThumbsUp className="w-3 h-3" /> Helpful
@@ -223,8 +222,8 @@ export function AIAnalystDrawer({ symbol, narrative }: AIAnalystDrawerProps) {
                                 className={cn(
                                     "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono border transition-all",
                                     feedback === "down"
-                                        ? "bg-red-500/20 border-red-500/40 text-red-400"
-                                        : "border-white/10 text-zinc-500 hover:border-white/20 hover:text-zinc-300"
+                                        ? "bg-red-500/20 border-red-500/40 text-red-600 dark:text-red-400"
+                                        : "border-border text-muted-foreground hover:text-foreground"
                                 )}
                             >
                                 <ThumbsDown className="w-3 h-3" /> Not helpful

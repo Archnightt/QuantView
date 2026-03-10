@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
     TrendingUp, TrendingDown, ArrowLeft, Clock, Check, Plus
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { HeroChart } from "@/components/HeroChart";
 import { AIAnalystDrawer } from "@/components/AIAnalystDrawer";
@@ -13,7 +14,6 @@ import { NewsImage } from "@/components/NewsImage";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer, ReferenceLine, LineChart, Line,
-    Cell, LabelList
 } from "recharts";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -52,8 +52,8 @@ function timeAgo(ts: number) {
 function StatChip({ label, value }: { label: string; value: string }) {
     return (
         <div className="flex flex-col gap-0.5 shrink-0">
-            <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-zinc-500">{label}</span>
-            <span className="text-[13px] font-mono font-semibold text-zinc-200 tabular-nums">{value}</span>
+            <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-muted-foreground/70">{label}</span>
+            <span className="text-[13px] font-mono font-semibold text-foreground tabular-nums">{value}</span>
         </div>
     );
 }
@@ -62,13 +62,13 @@ function StatChip({ label, value }: { label: string; value: string }) {
 function SectionLabel({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex items-center gap-2 mb-4">
-            <div className="w-[3px] h-4 rounded-full bg-[#f0a500]" />
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-500">{children}</span>
+            <div className="w-[3px] h-4 rounded-full bg-brand" />
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">{children}</span>
         </div>
     );
 }
 
-// ── Toggle Button Group ────────────────────────────────────────────────────────
+// ── Toggle Group ──────────────────────────────────────────────────────────────
 function ToggleGroup({
     options, value, onChange
 }: {
@@ -77,7 +77,7 @@ function ToggleGroup({
     onChange: (v: string) => void;
 }) {
     return (
-        <div className="flex bg-white/5 border border-white/10 p-0.5 rounded-lg gap-0.5">
+        <div className="flex bg-secondary/60 border border-border/50 p-0.5 rounded-lg gap-0.5">
             {options.map(opt => (
                 <button
                     key={opt.value}
@@ -85,8 +85,8 @@ function ToggleGroup({
                     className={cn(
                         "px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase tracking-wide transition-all",
                         value === opt.value
-                            ? "bg-[#f0a500] text-black"
-                            : "text-zinc-500 hover:text-zinc-300"
+                            ? "bg-brand text-black"
+                            : "text-muted-foreground hover:text-foreground"
                     )}
                 >
                     {opt.label}
@@ -112,11 +112,11 @@ function RatingBar({ ratings }: { ratings: any }) {
                 { label: "Strong Sell", value: strongSell, color: "bg-red-500" },
             ].map(({ label, value, color }) => (
                 <div key={label} className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-zinc-500 w-20 shrink-0">{label}</span>
-                    <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <span className="text-[10px] font-mono text-muted-foreground w-20 shrink-0">{label}</span>
+                    <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
                         <div className={cn("h-full rounded-full transition-all", color)} style={{ width: pct(value) }} />
                     </div>
-                    <span className="text-[11px] font-mono text-zinc-400 tabular-nums w-5 text-right">{value}</span>
+                    <span className="text-[11px] font-mono text-muted-foreground tabular-nums w-5 text-right">{value}</span>
                 </div>
             ))}
         </div>
@@ -131,14 +131,14 @@ function PriceTargetViz({ low, current, avg, high }: any) {
     return (
         <div className="mt-3">
             <div className="relative h-2 bg-gradient-to-r from-red-500 via-amber-400 to-emerald-500 rounded-full">
-                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white border-2 border-zinc-900 shadow z-10" style={{ left: pos(current) }} title={`Current $${current.toFixed(2)}`} />
-                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#f0a500] border-2 border-zinc-900 shadow z-10" style={{ left: pos(avg) }} title={`Avg $${avg?.toFixed(2)}`} />
+                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white border-2 border-card shadow z-10" style={{ left: pos(current) }} title={`Current $${current.toFixed(2)}`} />
+                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-brand border-2 border-card shadow z-10" style={{ left: pos(avg) }} title={`Avg $${avg?.toFixed(2)}`} />
             </div>
             <div className="flex justify-between mt-1.5">
-                <span className="text-[10px] font-mono text-red-400">${low?.toFixed(0)} Low</span>
-                <span className="text-[10px] font-mono text-zinc-300">${current?.toFixed(2)} Now</span>
-                <span className="text-[10px] font-mono text-[#f0a500]">${avg?.toFixed(0)} Avg</span>
-                <span className="text-[10px] font-mono text-emerald-400">${high?.toFixed(0)} High</span>
+                <span className="text-[10px] font-mono text-red-500">${low?.toFixed(0)} Low</span>
+                <span className="text-[10px] font-mono text-foreground">${current?.toFixed(2)} Now</span>
+                <span className="text-[10px] font-mono text-brand">${avg?.toFixed(0)} Avg</span>
+                <span className="text-[10px] font-mono text-emerald-500">${high?.toFixed(0)} High</span>
             </div>
         </div>
     );
@@ -157,43 +157,32 @@ function CustomEpsDot({ cx, cy, payload, dataKey }: any) {
 
 // ── Compare To Section ────────────────────────────────────────────────────────
 function CompareToSection({ symbol, stockDetails, peers }: { symbol: string; stockDetails: any; peers: any[] }) {
-    const isPositive = (n: number) => n >= 0;
-    const currentCard = {
-        symbol,
-        name: stockDetails.name ?? symbol,
-        price: stockDetails.price,
-        change: stockDetails.change ?? 0,
-        marketCap: stockDetails.financials?.marketCap,
-        industry: stockDetails.industry,
-        selected: true,
-    };
-
     return (
         <section>
             <SectionLabel>Compare To</SectionLabel>
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                {/* Current stock — highlighted */}
-                <div className="shrink-0 w-48 p-4 rounded-xl border-2 border-[#f0a500]/60 bg-[#f0a500]/5 relative">
-                    <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#f0a500] flex items-center justify-center">
+                {/* Current stock */}
+                <div className="shrink-0 w-48 p-4 rounded-xl border-2 border-brand/60 bg-brand/5 relative">
+                    <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-brand flex items-center justify-center">
                         <Check className="w-3 h-3 text-black" />
                     </div>
-                    <p className="text-[13px] font-mono font-bold text-white mb-0.5">{currentCard.symbol}</p>
-                    <p className="text-[10px] font-sans text-zinc-500 line-clamp-1 mb-3">{currentCard.name}</p>
+                    <p className="text-[13px] font-mono font-bold text-foreground mb-0.5">{symbol}</p>
+                    <p className="text-[10px] font-sans text-muted-foreground line-clamp-1 mb-3">{stockDetails.name}</p>
                     <div className="flex items-baseline gap-1.5 mb-2">
-                        <span className="text-[15px] font-mono font-bold text-white tabular-nums">{currentCard.price.toFixed(2)}</span>
-                        <span className={cn("text-[11px] font-mono font-bold", isPositive(currentCard.change) ? "text-emerald-400" : "text-red-400")}>
-                            {currentCard.change > 0 ? "+" : ""}{currentCard.change.toFixed(2)}%
+                        <span className="text-[15px] font-mono font-bold text-foreground tabular-nums">{stockDetails.price?.toFixed(2)}</span>
+                        <span className={cn("text-[11px] font-mono font-bold", (stockDetails.change ?? 0) >= 0 ? "text-emerald-500" : "text-red-500")}>
+                            {(stockDetails.change ?? 0) > 0 ? "+" : ""}{(stockDetails.change ?? 0).toFixed(2)}%
                         </span>
                     </div>
-                    <div className="pt-2 border-t border-white/10 space-y-1">
+                    <div className="pt-2 border-t border-border/50 space-y-1">
                         <div className="flex justify-between">
-                            <span className="text-[9px] font-mono text-zinc-600 uppercase">Mkt Cap</span>
-                            <span className="text-[10px] font-mono text-zinc-300">{fmtLarge(currentCard.marketCap)}</span>
+                            <span className="text-[9px] font-mono text-muted-foreground/60 uppercase">Mkt Cap</span>
+                            <span className="text-[10px] font-mono text-foreground">{fmtLarge(stockDetails.financials?.marketCap)}</span>
                         </div>
-                        {currentCard.industry && (
+                        {stockDetails.industry && (
                             <div className="flex justify-between gap-2">
-                                <span className="text-[9px] font-mono text-zinc-600 uppercase">Industry</span>
-                                <span className="text-[10px] font-mono text-zinc-300 text-right line-clamp-1">{currentCard.industry}</span>
+                                <span className="text-[9px] font-mono text-muted-foreground/60 uppercase">Industry</span>
+                                <span className="text-[10px] font-mono text-foreground text-right line-clamp-1">{stockDetails.industry}</span>
                             </div>
                         )}
                     </div>
@@ -201,22 +190,23 @@ function CompareToSection({ symbol, stockDetails, peers }: { symbol: string; sto
 
                 {/* Peers */}
                 {peers.map(peer => (
-                    <Link key={peer.symbol} href={`/stocks/${peer.symbol}`} className="shrink-0 w-48 p-4 rounded-xl border border-white/8 bg-[#111318] hover:border-white/20 hover:bg-[#181b22] transition-all relative group">
-                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full border border-white/15 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Plus className="w-3 h-3 text-zinc-400" />
+                    <Link key={peer.symbol} href={`/stocks/${peer.symbol}`}
+                        className="shrink-0 w-48 p-4 rounded-xl border border-border/60 bg-card hover:border-border hover:bg-secondary/30 transition-all relative group">
+                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Plus className="w-3 h-3 text-muted-foreground" />
                         </div>
-                        <p className="text-[13px] font-mono font-bold text-white mb-0.5">{peer.symbol}</p>
-                        <p className="text-[10px] font-sans text-zinc-500 line-clamp-1 mb-3">{peer.name}</p>
+                        <p className="text-[13px] font-mono font-bold text-foreground mb-0.5">{peer.symbol}</p>
+                        <p className="text-[10px] font-sans text-muted-foreground line-clamp-1 mb-3">{peer.name}</p>
                         <div className="flex items-baseline gap-1.5 mb-2">
-                            <span className="text-[15px] font-mono font-bold text-white tabular-nums">{peer.price.toFixed(2)}</span>
-                            <span className={cn("text-[11px] font-mono font-bold", isPositive(peer.change) ? "text-emerald-400" : "text-red-400")}>
-                                {peer.change > 0 ? "+" : ""}{peer.change.toFixed(2)}%
+                            <span className="text-[15px] font-mono font-bold text-foreground tabular-nums">{peer.price?.toFixed(2)}</span>
+                            <span className={cn("text-[11px] font-mono font-bold", (peer.change ?? 0) >= 0 ? "text-emerald-500" : "text-red-500")}>
+                                {(peer.change ?? 0) > 0 ? "+" : ""}{(peer.change ?? 0).toFixed(2)}%
                             </span>
                         </div>
-                        <div className="pt-2 border-t border-white/10 space-y-1">
+                        <div className="pt-2 border-t border-border/50">
                             <div className="flex justify-between">
-                                <span className="text-[9px] font-mono text-zinc-600 uppercase">Mkt Cap</span>
-                                <span className="text-[10px] font-mono text-zinc-300">{fmtLarge(peer.marketCap)}</span>
+                                <span className="text-[9px] font-mono text-muted-foreground/60 uppercase">Mkt Cap</span>
+                                <span className="text-[10px] font-mono text-foreground">{fmtLarge(peer.marketCap)}</span>
                             </div>
                         </div>
                     </Link>
@@ -235,6 +225,28 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
 }) {
     const [activeTab, setActiveTab] = useState<"summary" | "financials" | "analysis">("summary");
     const [revenueView, setRevenueView] = useState<"quarterly" | "annual">("quarterly");
+    const { resolvedTheme } = useTheme();
+
+    const isDark = resolvedTheme === "dark";
+    const tickColor = isDark ? "#52525b" : "#a1a1aa";
+    const gridColor = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.06)";
+    const tooltipBg = isDark ? "#1c1f26" : "#ffffff";
+    const tooltipBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+    const tooltipTextColor = isDark ? "#e4e4e7" : "#18181b";
+    const tooltipLabelColor = isDark ? "#a1a1aa" : "#71717a";
+
+    const tooltipStyle = {
+        contentStyle: {
+            background: tooltipBg,
+            border: `1px solid ${tooltipBorder}`,
+            borderRadius: "10px",
+            fontFamily: "var(--font-mono, monospace)",
+            fontSize: "12px",
+            color: tooltipTextColor,
+        },
+        labelStyle: { color: tooltipLabelColor },
+        itemStyle: { color: tooltipTextColor },
+    };
 
     const isPositive = (stockIngest?.change ?? 0) > 0;
     const change = stockIngest?.change ?? 0;
@@ -242,7 +254,6 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
     const currency = stockDetails?.currency ?? "$";
     const fin = stockDetails?.financials ?? {};
     const symbol = stockDetails?.symbol ?? "";
-    const narrative = stockIngest?.narrative ?? "";
 
     const earningsData = (stockDetails?.earningsHistory ?? []).map((q: any) => ({
         quarter: q.date,
@@ -272,18 +283,12 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
         { id: "analysis", label: "Analysis" },
     ] as const;
 
-    const tooltipStyle = {
-        contentStyle: { background: '#181b22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#e4e4e7' },
-        labelStyle: { color: '#a1a1aa' },
-        itemStyle: { color: '#e4e4e7' },
-    };
-
     return (
-        <div className="min-h-screen bg-[#0c0d0f]">
+        <div className="min-h-screen bg-background">
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6">
 
                 {/* Back */}
-                <Link href="/" className="inline-flex items-center gap-1.5 text-[12px] font-mono text-zinc-500 hover:text-zinc-200 transition-colors mb-6">
+                <Link href="/" className="inline-flex items-center gap-1.5 text-[12px] font-mono text-muted-foreground hover:text-foreground transition-colors mb-6">
                     <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
                 </Link>
 
@@ -291,25 +296,29 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
                     <div className="flex items-center gap-4">
                         {stockIngest?.imageUrl && (
-                            <div className="relative w-14 h-14 rounded-2xl overflow-hidden bg-white shadow-lg ring-1 ring-white/10 shrink-0">
+                            <div className="relative w-14 h-14 rounded-2xl overflow-hidden bg-white shadow-lg ring-1 ring-border shrink-0">
                                 <Image src={stockIngest.imageUrl} alt={stockIngest.name} fill className="object-contain p-1.5" sizes="56px" />
                             </div>
                         )}
                         <div>
                             <div className="flex items-center gap-2 mb-0.5">
-                                <h1 className="text-[28px] font-mono font-bold text-white tracking-tight leading-none">{symbol}</h1>
+                                <h1 className="text-[28px] font-mono font-bold text-foreground tracking-tight leading-none">{symbol}</h1>
                                 {stockDetails?.exchange && (
-                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-zinc-500 uppercase tracking-wider">{stockDetails.exchange}</span>
+                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary border border-border/60 text-muted-foreground uppercase tracking-wider">
+                                        {stockDetails.exchange}
+                                    </span>
                                 )}
                             </div>
-                            <p className="text-[14px] font-sans text-zinc-400">{stockIngest?.name}</p>
+                            <p className="text-[14px] font-sans text-muted-foreground">{stockIngest?.name}</p>
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="text-[36px] font-mono font-bold text-white leading-none tabular-nums">{currency}{price.toFixed(2)}</div>
+                        <div className="text-[36px] font-mono font-bold text-foreground leading-none tabular-nums">{currency}{price.toFixed(2)}</div>
                         <div className={cn(
                             "inline-flex items-center gap-1.5 mt-1.5 px-3 py-1.5 rounded-full text-[13px] font-mono font-bold",
-                            isPositive ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30" : "bg-red-500/15 text-red-400 ring-1 ring-red-500/30"
+                            isPositive
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/30"
+                                : "bg-red-500/10 text-red-600 dark:text-red-400 ring-1 ring-red-500/30"
                         )}>
                             {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                             {isPositive ? "+" : ""}{change.toFixed(2)}%
@@ -318,21 +327,21 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                 </div>
 
                 {/* ── Stat Strip ───────────────────────────────────────────────────── */}
-                <div className="flex items-center gap-5 overflow-x-auto no-scrollbar pb-3 mb-5 border-b border-white/5">
+                <div className="flex items-center gap-5 overflow-x-auto no-scrollbar pb-3 mb-5 border-b border-border/50">
                     <StatChip label="Prev Close" value={`${currency}${fmt(stockDetails?.previousClose)}`} />
-                    <div className="w-px h-6 bg-white/10 shrink-0" />
+                    <div className="w-px h-6 bg-border shrink-0" />
                     <StatChip label="Open" value={`${currency}${fmt(stockDetails?.open)}`} />
-                    <div className="w-px h-6 bg-white/10 shrink-0" />
+                    <div className="w-px h-6 bg-border shrink-0" />
                     <StatChip label="Day Range" value={`${fmt(stockDetails?.dayLow)} – ${fmt(stockDetails?.dayHigh)}`} />
-                    <div className="w-px h-6 bg-white/10 shrink-0" />
+                    <div className="w-px h-6 bg-border shrink-0" />
                     <StatChip label="52W Range" value={`${fmt(stockDetails?.fiftyTwoWeekLow)} – ${fmt(stockDetails?.fiftyTwoWeekHigh)}`} />
-                    <div className="w-px h-6 bg-white/10 shrink-0" />
+                    <div className="w-px h-6 bg-border shrink-0" />
                     <StatChip label="Volume" value={fmtVol(stockDetails?.volume)} />
-                    <div className="w-px h-6 bg-white/10 shrink-0" />
+                    <div className="w-px h-6 bg-border shrink-0" />
                     <StatChip label="Market Cap" value={fmtLarge(fin.marketCap)} />
                     {fin.targetPrice && (
                         <>
-                            <div className="w-px h-6 bg-white/10 shrink-0" />
+                            <div className="w-px h-6 bg-border shrink-0" />
                             <StatChip label="Analyst Target" value={`${currency}${fmt(fin.targetPrice)}`} />
                         </>
                     )}
@@ -344,98 +353,99 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                 </div>
 
                 {/* ── Tab Bar ──────────────────────────────────────────────────────── */}
-                <div className="flex items-center gap-1 border-b border-white/10 mb-8">
+                <div className="flex items-center gap-1 border-b border-border/60 mb-8">
                     {TABS.map(({ id, label }) => (
                         <button key={id} onClick={() => setActiveTab(id)} className={cn(
                             "px-5 py-2.5 text-[12px] font-mono font-bold uppercase tracking-widest transition-all duration-200 border-b-2 -mb-px",
-                            activeTab === id ? "text-[#f0a500] border-[#f0a500]" : "text-zinc-500 border-transparent hover:text-zinc-300"
+                            activeTab === id
+                                ? "text-brand border-brand"
+                                : "text-muted-foreground border-transparent hover:text-foreground"
                         )}>
                             {label}
                         </button>
                     ))}
                 </div>
 
-                {/* ════════════════════════════════════════════════════════════════════ */}
-                {/* TAB 1: SUMMARY                                                      */}
-                {/* ════════════════════════════════════════════════════════════════════ */}
+                {/* ════════════════ TAB 1: SUMMARY ════════════════ */}
                 {activeTab === "summary" && (
                     <div className="space-y-8 pb-32">
-                        {/* Latest Headlines */}
                         <section>
                             <SectionLabel>Latest Headlines</SectionLabel>
-                            <div className="space-y-px overflow-hidden rounded-xl border border-white/8">
+                            <div className="space-y-px overflow-hidden rounded-xl border border-border/60">
                                 {(stockDetails?.news ?? []).slice(0, 5).map((item: any) => (
                                     <Link key={item.uuid} href={item.link} target="_blank"
-                                        className="flex items-start gap-4 p-4 bg-[#111318] hover:bg-[#181b22] transition-colors group">
-                                        <div className="relative w-20 h-14 shrink-0 rounded-lg overflow-hidden bg-white/5 border border-white/10">
+                                        className="flex items-start gap-4 p-4 bg-card hover:bg-secondary/30 transition-colors group">
+                                        <div className="relative w-20 h-14 shrink-0 rounded-lg overflow-hidden bg-secondary border border-border/50">
                                             <NewsImage src={item.thumbnail?.resolutions?.[0]?.url} alt={item.title} />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-2 mb-1">
-                                                <span className="text-[9px] font-mono font-bold text-[#f0a500] uppercase tracking-widest">{item.publisher}</span>
-                                                <span className="text-[10px] font-mono text-zinc-600 flex items-center gap-1 shrink-0">
+                                                <span className="text-[9px] font-mono font-bold text-brand uppercase tracking-widest">{item.publisher}</span>
+                                                <span className="text-[10px] font-mono text-muted-foreground/60 flex items-center gap-1 shrink-0">
                                                     <Clock className="w-2.5 h-2.5" />{timeAgo(item.providerPublishTime)}
                                                 </span>
                                             </div>
-                                            <h3 className="text-[13px] font-sans font-medium text-zinc-200 group-hover:text-white transition-colors line-clamp-2 leading-snug">{item.title}</h3>
+                                            <h3 className="text-[13px] font-sans font-medium text-foreground/90 group-hover:text-foreground transition-colors line-clamp-2 leading-snug">
+                                                {item.title}
+                                            </h3>
                                         </div>
                                     </Link>
                                 ))}
                             </div>
                         </section>
 
-                        {/* Compare To */}
                         {peers.length > 0 && (
-                            <CompareToSection symbol={symbol} stockDetails={{ ...stockDetails, name: stockIngest?.name, change }} peers={peers} />
+                            <CompareToSection
+                                symbol={symbol}
+                                stockDetails={{ ...stockDetails, name: stockIngest?.name, change }}
+                                peers={peers}
+                            />
                         )}
 
-                        {/* About */}
                         {stockDetails?.description && (
                             <section>
                                 <SectionLabel>About {symbol}</SectionLabel>
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
-                                    <p className="text-[13px] font-sans text-zinc-400 leading-relaxed line-clamp-5">{stockDetails.description}</p>
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
+                                    <p className="text-[13px] font-sans text-muted-foreground leading-relaxed line-clamp-5">
+                                        {stockDetails.description}
+                                    </p>
                                 </div>
                             </section>
                         )}
                     </div>
                 )}
 
-                {/* ════════════════════════════════════════════════════════════════════ */}
-                {/* TAB 2: FINANCIALS                                                   */}
-                {/* ════════════════════════════════════════════════════════════════════ */}
+                {/* ════════════════ TAB 2: FINANCIALS ════════════════ */}
                 {activeTab === "financials" && (
                     <div className="space-y-8 pb-32">
-                        {/* Earnings + Revenue — side by side */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {/* EPS Chart */}
                             {earningsData.length > 0 && (
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
                                     <div className="flex items-center justify-between mb-4">
                                         <SectionLabel>Earnings Per Share</SectionLabel>
                                     </div>
                                     <div className="h-[200px]">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart data={earningsData} margin={{ top: 12, right: 12, bottom: 0, left: -20 }}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                                                <XAxis dataKey="quarter" tick={{ fontSize: 10, fontFamily: 'var(--font-mono)', fill: '#52525b' }} tickLine={false} axisLine={false} />
-                                                <YAxis tick={{ fontSize: 10, fontFamily: 'var(--font-mono)', fill: '#52525b' }} tickLine={false} axisLine={false} />
+                                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                                                <XAxis dataKey="quarter" tick={{ fontSize: 10, fontFamily: "monospace", fill: tickColor }} tickLine={false} axisLine={false} />
+                                                <YAxis tick={{ fontSize: 10, fontFamily: "monospace", fill: tickColor }} tickLine={false} axisLine={false} />
                                                 <Tooltip {...tooltipStyle} formatter={(v: any, name: string) => [v?.toFixed(2), name]} />
-                                                <ReferenceLine y={0} stroke="rgba(255,255,255,0.08)" />
-                                                <Line type="monotone" dataKey="estimate" name="Estimate" stroke="#52525b" strokeWidth={1.5} strokeDasharray="4 4"
+                                                <ReferenceLine y={0} stroke={isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"} />
+                                                <Line type="monotone" dataKey="estimate" name="Estimate" stroke="#a1a1aa" strokeWidth={1.5} strokeDasharray="4 4"
                                                     dot={(props: any) => { const { key, ...rest } = props; return <CustomEpsDot key={key} {...rest} dataKey="estimate" />; }} />
                                                 <Line type="monotone" dataKey="actual" name="Actual" stroke="#10b981" strokeWidth={2}
                                                     dot={(props: any) => { const { key, ...rest } = props; return <CustomEpsDot key={key} {...rest} dataKey="actual" />; }} />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </div>
-                                    {/* Beat/Miss row */}
-                                    <div className="flex justify-around mt-3 pt-3 border-t border-white/5">
+                                    <div className="flex justify-around mt-3 pt-3 border-t border-border/40">
                                         {earningsData.map((q: any, i: number) => (
                                             <div key={i} className="flex flex-col items-center gap-0.5">
-                                                <span className="text-[9px] font-mono text-zinc-600">{q.quarter}</span>
+                                                <span className="text-[9px] font-mono text-muted-foreground/60">{q.quarter}</span>
                                                 {q.beat !== null && (
-                                                    <span className={cn("text-[9px] font-mono font-bold", q.beat ? "text-emerald-400" : "text-red-400")}>
+                                                    <span className={cn("text-[9px] font-mono font-bold", q.beat ? "text-emerald-500" : "text-red-500")}>
                                                         {q.beat ? "Beat" : "Miss"}
                                                         {q.diff !== null && ` ${q.diff > 0 ? "+" : ""}${q.diff.toFixed(2)}`}
                                                     </span>
@@ -446,9 +456,9 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                 </div>
                             )}
 
-                            {/* Revenue vs Earnings Chart */}
+                            {/* Revenue vs Earnings */}
                             {(revenueDataQ.length > 0 || revenueDataA.length > 0) && (
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
                                     <div className="flex items-center justify-between mb-4">
                                         <SectionLabel>Revenue vs. Earnings ($B)</SectionLabel>
                                         <ToggleGroup
@@ -460,36 +470,35 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                     <div className="h-[200px]">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={activeRevenueData} margin={{ top: 12, right: 12, bottom: 0, left: -20 }} barGap={3}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                                                <XAxis dataKey="quarter" tick={{ fontSize: 10, fontFamily: 'var(--font-mono)', fill: '#52525b' }} tickLine={false} axisLine={false} />
-                                                <YAxis tick={{ fontSize: 10, fontFamily: 'var(--font-mono)', fill: '#52525b' }} tickLine={false} axisLine={false} />
+                                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                                                <XAxis dataKey="quarter" tick={{ fontSize: 10, fontFamily: "monospace", fill: tickColor }} tickLine={false} axisLine={false} />
+                                                <YAxis tick={{ fontSize: 10, fontFamily: "monospace", fill: tickColor }} tickLine={false} axisLine={false} />
                                                 <Tooltip {...tooltipStyle} formatter={(v: any) => [(v as number)?.toFixed(2) + "B", ""]} />
                                                 <Bar dataKey="revenue" name="Revenue" fill="#3b82f6" radius={[3, 3, 0, 0]} maxBarSize={28} />
                                                 <Bar dataKey="earnings" name="Earnings" fill="#f0a500" radius={[3, 3, 0, 0]} maxBarSize={28} />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
-                                    {/* Legend */}
-                                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5 justify-center">
+                                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border/40 justify-center">
                                         <div className="flex items-center gap-1.5">
-                                            <div className="w-2.5 h-2.5 rounded-sm bg-[#3b82f6]" />
-                                            <span className="text-[10px] font-mono text-zinc-500">Revenue</span>
+                                            <div className="w-2.5 h-2.5 rounded-sm bg-blue-500" />
+                                            <span className="text-[10px] font-mono text-muted-foreground">Revenue</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
-                                            <div className="w-2.5 h-2.5 rounded-sm bg-[#f0a500]" />
-                                            <span className="text-[10px] font-mono text-zinc-500">Earnings</span>
+                                            <div className="w-2.5 h-2.5 rounded-sm bg-brand" />
+                                            <span className="text-[10px] font-mono text-muted-foreground">Earnings</span>
                                         </div>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Valuation Measures — two columns */}
+                        {/* Valuation + Financial Highlights */}
                         <section>
                             <SectionLabel>Valuation & Financial Highlights</SectionLabel>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
-                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#f0a500] mb-4">Valuation</p>
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
+                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand mb-4">Valuation</p>
                                     {[
                                         { label: "P/E Ratio", value: fmt(fin.peRatio) },
                                         { label: "Forward P/E", value: fmt(fin.forwardPE) },
@@ -498,14 +507,14 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                         { label: "Price/Book", value: fmt(fin.priceToBook) },
                                         { label: "EV/EBITDA", value: fmt(fin.evToEbitda) },
                                     ].map(({ label, value }) => (
-                                        <div key={label} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
-                                            <span className="text-[12px] font-sans text-zinc-500">{label}</span>
-                                            <span className="text-[13px] font-mono font-semibold text-zinc-200 tabular-nums">{value}</span>
+                                        <div key={label} className="flex items-center justify-between py-1.5 border-b border-border/40 last:border-0">
+                                            <span className="text-[12px] font-sans text-muted-foreground">{label}</span>
+                                            <span className="text-[13px] font-mono font-semibold text-foreground tabular-nums">{value}</span>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
-                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#f0a500] mb-4">Financial Highlights</p>
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
+                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand mb-4">Financial Highlights</p>
                                     {[
                                         { label: "Revenue (TTM)", value: fmtLarge(fin.revenue) },
                                         { label: "Revenue Growth", value: fmtPct(fin.revenueGrowth) },
@@ -516,9 +525,9 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                         { label: "Debt/Equity", value: fin.debtToEquity != null ? fin.debtToEquity.toFixed(2) : "—" },
                                         { label: "Beta", value: fmt(fin.beta) },
                                     ].map(({ label, value }) => (
-                                        <div key={label} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
-                                            <span className="text-[12px] font-sans text-zinc-500">{label}</span>
-                                            <span className="text-[13px] font-mono font-semibold text-zinc-200 tabular-nums">{value}</span>
+                                        <div key={label} className="flex items-center justify-between py-1.5 border-b border-border/40 last:border-0">
+                                            <span className="text-[12px] font-sans text-muted-foreground">{label}</span>
+                                            <span className="text-[13px] font-mono font-semibold text-foreground tabular-nums">{value}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -527,75 +536,73 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                     </div>
                 )}
 
-                {/* ════════════════════════════════════════════════════════════════════ */}
-                {/* TAB 3: ANALYSIS                                                     */}
-                {/* ════════════════════════════════════════════════════════════════════ */}
+                {/* ════════════════ TAB 3: ANALYSIS ════════════════ */}
                 {activeTab === "analysis" && (
                     <div className="space-y-8 pb-32">
-                        {/* Analyst Insights — 2 column */}
                         <section>
                             <SectionLabel>Analyst Insights</SectionLabel>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* Recommendations Bar */}
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
                                     <div className="flex items-center gap-2 mb-4">
-                                        <div className="w-[2px] h-4 rounded-full bg-[#f0a500]" />
-                                        <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-zinc-500">Analyst Recommendations</span>
+                                        <div className="w-[2px] h-4 rounded-full bg-brand" />
+                                        <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground">Analyst Recommendations</span>
                                     </div>
                                     {stockDetails?.analystRatings ? (
                                         <>
                                             <RatingBar ratings={stockDetails.analystRatings} />
                                             {fin.recommendation && (
-                                                <div className="mt-4 pt-3 border-t border-white/5 flex items-center gap-2">
-                                                    <span className="text-[10px] font-mono text-zinc-600">Consensus:</span>
-                                                    <span className="text-[12px] font-mono font-bold uppercase tracking-wide text-[#f0a500]">
+                                                <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-2">
+                                                    <span className="text-[10px] font-mono text-muted-foreground/60">Consensus:</span>
+                                                    <span className="text-[12px] font-mono font-bold uppercase tracking-wide text-brand">
                                                         {fin.recommendation.replace(/_/g, ' ')}
                                                     </span>
                                                 </div>
                                             )}
                                         </>
                                     ) : (
-                                        <p className="text-[12px] font-sans text-zinc-600">No analyst data available.</p>
+                                        <p className="text-[12px] font-sans text-muted-foreground">No analyst data available.</p>
                                     )}
                                 </div>
 
                                 {/* Price Target */}
-                                <div className="bg-[#111318] border border-white/8 rounded-xl p-5">
+                                <div className="bg-card border border-border/60 rounded-xl p-5">
                                     <div className="flex items-center gap-2 mb-4">
-                                        <div className="w-[2px] h-4 rounded-full bg-[#f0a500]" />
-                                        <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-zinc-500">Price Target Range</span>
+                                        <div className="w-[2px] h-4 rounded-full bg-brand" />
+                                        <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground">Price Target Range</span>
                                     </div>
-                                    <div className="text-[30px] font-mono font-bold text-white tabular-nums leading-none">{currency}{fmt(fin.targetPrice)}</div>
-                                    <div className="text-[11px] font-mono text-zinc-500 mt-0.5">Average of {fin.totalAnalysts ?? "—"} analysts</div>
+                                    <div className="text-[30px] font-mono font-bold text-foreground tabular-nums leading-none">{currency}{fmt(fin.targetPrice)}</div>
+                                    <div className="text-[11px] font-mono text-muted-foreground mt-0.5">Average of {fin.totalAnalysts ?? "—"} analysts</div>
                                     <PriceTargetViz low={fin.targetLow} current={fin.currentPrice ?? price} avg={fin.targetPrice} high={fin.targetHigh} />
                                 </div>
                             </div>
                         </section>
 
-                        {/* Recent Analyst Actions */}
                         {stockDetails?.recentUpgrades?.length > 0 && (
                             <section>
                                 <SectionLabel>Recent Analyst Actions</SectionLabel>
-                                <div className="overflow-hidden rounded-xl border border-white/8">
+                                <div className="overflow-hidden rounded-xl border border-border/60">
                                     {stockDetails.recentUpgrades.map((u: any, i: number) => (
-                                        <div key={i} className="flex items-center justify-between px-5 py-3.5 bg-[#111318] border-b border-white/5 last:border-0">
+                                        <div key={i} className="flex items-center justify-between px-5 py-3.5 bg-card border-b border-border/40 last:border-0 hover:bg-secondary/20 transition-colors">
                                             <div className="flex items-center gap-3">
-                                                <div className={cn("w-1.5 h-1.5 rounded-full", u.action === "up" ? "bg-emerald-400" : u.action === "down" ? "bg-red-400" : "bg-zinc-500")} />
-                                                <span className="text-[13px] font-sans font-medium text-zinc-200">{u.firm}</span>
+                                                <div className={cn("w-1.5 h-1.5 rounded-full",
+                                                    u.action === "up" ? "bg-emerald-500" : u.action === "down" ? "bg-red-500" : "bg-muted-foreground"
+                                                )} />
+                                                <span className="text-[13px] font-sans font-medium text-foreground">{u.firm}</span>
                                             </div>
                                             <div className="flex items-center gap-4">
-                                                {u.fromGrade && <span className="text-[11px] font-mono text-zinc-600 line-through">{u.fromGrade}</span>}
+                                                {u.fromGrade && <span className="text-[11px] font-mono text-muted-foreground line-through">{u.fromGrade}</span>}
                                                 <span className={cn(
                                                     "text-[11px] font-mono font-bold px-2 py-0.5 rounded",
                                                     u.toGrade?.toLowerCase().includes("buy") || u.toGrade?.toLowerCase().includes("outperform") || u.toGrade?.toLowerCase().includes("overweight")
-                                                        ? "bg-emerald-500/15 text-emerald-400"
+                                                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                                                         : u.toGrade?.toLowerCase().includes("sell") || u.toGrade?.toLowerCase().includes("underperform") || u.toGrade?.toLowerCase().includes("underweight")
-                                                            ? "bg-red-500/15 text-red-400"
-                                                            : "bg-zinc-800 text-zinc-400"
+                                                            ? "bg-red-500/15 text-red-600 dark:text-red-400"
+                                                            : "bg-secondary text-muted-foreground"
                                                 )}>
                                                     {u.toGrade}
                                                 </span>
-                                                <span className="text-[10px] font-mono text-zinc-600">{u.date}</span>
+                                                <span className="text-[10px] font-mono text-muted-foreground/60">{u.date}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -603,16 +610,18 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                             </section>
                         )}
 
-                        {/* Compare To (also in Analysis) */}
                         {peers.length > 0 && (
-                            <CompareToSection symbol={symbol} stockDetails={{ ...stockDetails, name: stockIngest?.name, change }} peers={peers} />
+                            <CompareToSection
+                                symbol={symbol}
+                                stockDetails={{ ...stockDetails, name: stockIngest?.name, change }}
+                                peers={peers}
+                            />
                         )}
                     </div>
                 )}
             </div>
 
-            {/* AI Analyst Floating Drawer */}
-            <AIAnalystDrawer symbol={symbol} narrative={narrative} />
+            <AIAnalystDrawer symbol={symbol} narrative={stockIngest?.narrative ?? ""} />
         </div>
     );
 }
