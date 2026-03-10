@@ -144,7 +144,7 @@ export function DraggablePageLayout({
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
           {items.map((id) => (
             <SortableSection key={id} id={id} title={getTitle(id)}>
               {renderSection(id)}
