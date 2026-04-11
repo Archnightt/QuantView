@@ -30,14 +30,14 @@ const routes = [
     bgColor: "bg-sky-500/10",
   },
   {
-    label: "Not News",
+    label: "Market News",
     icon: Newspaper,
     href: "/news",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
   {
-    label: "Not Analysis",
+    label: "Analysis",
     icon: LineChart,
     href: "/analysis",
     color: "text-pink-500",
