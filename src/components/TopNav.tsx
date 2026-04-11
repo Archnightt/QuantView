@@ -23,12 +23,12 @@ const routes = [
         href: "/",
     },
     {
-        label: "Not Market News",
+        label: "Market News",
         icon: Newspaper,
         href: "/news",
     },
     {
-        label: "Not Analysis",
+        label: "Analysis",
         icon: LineChart,
         href: "/analysis",
     },
