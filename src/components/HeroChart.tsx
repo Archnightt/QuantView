@@ -85,7 +85,7 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/40 shrink-0">
         <div className="space-y-0.5">
           {/* Ticker in mono */}
-          <p className="text-[11px] font-mono font-semibold text-muted-foreground uppercase tracking-widest">
+          <p className="text-[11px] font-open font-bold text-muted-foreground uppercase tracking-widest">
             {symbol} &middot; {RANGES.find(r => r.value === range)?.label} Trend
           </p>
           {/* Name in display serif */}
@@ -95,10 +95,10 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
           {/* Price & change in mono */}
           {lastPrice && (
             <div className="flex items-baseline gap-2 pt-0.5">
-              <span className="font-display text-3xl tabular">
+              <span className="font-open font-bold text-3xl tabular">
                 ${lastPrice.toFixed(2)}
               </span>
-              <span className={`font-mono text-sm font-semibold tabular ${isPositiveChart ? 'text-emerald-500' : 'text-red-500'}`}>
+              <span className={`font-open text-sm font-bold tabular ${isPositiveChart ? 'text-emerald-500' : 'text-red-500'}`}>
                 {isPositiveChart ? '+' : ''}{pctChange.toFixed(2)}%
               </span>
             </div>
@@ -113,7 +113,7 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
               variant={range === r.value ? "default" : "ghost"}
               size="sm"
               onClick={() => setRange(r.value)}
-              className={`h-7 px-2 md:px-3 text-[10px] md:text-xs font-mono font-semibold ${range === r.value
+              className={`h-7 px-2 md:px-3 text-[10px] md:text-xs font-open font-bold ${range === r.value
                   ? "bg-brand text-brand-foreground shadow-sm hover:bg-brand/90"
                   : "hover:bg-background/50 text-muted-foreground"
                 }`}
@@ -148,7 +148,7 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
                 <YAxis
                   domain={['dataMin', 'dataMax']}
                   orientation="right"
-                  tick={{ fontSize: 10, fill: '#888', fontFamily: 'var(--font-mono)' }}
+                  tick={{ fontSize: 10, fill: '#888', fontFamily: 'Open Sans' }}
                   tickFormatter={(val) => val.toFixed(2)}
                   width={52}
                   axisLine={false}
@@ -161,7 +161,7 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
                     backgroundColor: 'hsl(var(--card))',
                     color: 'hsl(var(--foreground))',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                    fontFamily: 'var(--font-mono)',
+                    fontFamily: 'Open Sans',
                     fontSize: '12px',
                   }}
                   itemStyle={{ color: chartColor, fontWeight: 'bold' }}

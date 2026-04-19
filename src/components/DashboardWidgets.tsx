@@ -14,7 +14,7 @@ function WidgetHeader({ title, icon: Icon }: { title: string, icon: any }) {
     <div className="flex items-center gap-2 mb-3">
       <div className="w-[3px] h-4 rounded-full bg-brand shrink-0" />
       <Icon className="w-3.5 h-3.5 text-muted-foreground" />
-      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">{title}</span>
+      <span className="text-[10px] font-open font-bold uppercase tracking-widest text-muted-foreground">{title}</span>
     </div>
   );
 }
@@ -89,7 +89,7 @@ export function SectorWidget({ data }: { data: any[] }) {
         <div className="flex items-center gap-2">
           <div className="w-[3px] h-4 rounded-full bg-brand shrink-0" />
           <PieChart className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">Sectors</span>
+          <span className="text-[10px] font-open font-bold uppercase tracking-widest text-muted-foreground">Sectors</span>
         </div>
         <div className="flex gap-0.5">
           <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary/50" onClick={prevPage}>
@@ -115,10 +115,10 @@ export function SectorWidget({ data }: { data: any[] }) {
                   <Icon className="w-3.5 h-3.5" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-sans font-medium leading-none mb-0.5 truncate">
+                  <div className="text-sm font-sans font-bold leading-none mb-0.5 truncate">
                     {SECTOR_MAP[sector.symbol] || sector.symbol}
                   </div>
-                  <div className="text-[10px] font-mono text-muted-foreground">
+                  <div className="text-[10px] font-open text-muted-foreground">
                     {sector.symbol}
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export function SectorWidget({ data }: { data: any[] }) {
               {/* Right: Sparkline + % Change */}
               <div className="flex items-center gap-3 shrink-0">
                 <MiniSparkline data={sector.sparkline} isPositive={isPositive} />
-                <div className={`text-[13px] font-mono font-semibold w-14 text-right tabular ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
+                <div className={`text-[13px] font-open font-bold w-14 text-right tabular ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
                   {change > 0 ? '+' : ''}{change.toFixed(2)}%
                 </div>
               </div>
@@ -162,7 +162,7 @@ export function TrendingWidget({ data }: { data: any[] }) {
       <div className="space-y-2">
         {data.map((t: any) => (
           <div key={t.symbol} className="flex justify-between items-center">
-            <span className="font-mono text-sm font-bold">{t.symbol}</span>
+            <span className="font-open text-sm font-bold">{t.symbol}</span>
             <span className="text-muted-foreground text-[10px] font-sans">Active</span>
           </div>
         ))}

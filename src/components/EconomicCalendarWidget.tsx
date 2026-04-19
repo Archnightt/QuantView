@@ -41,7 +41,7 @@ export function EconomicCalendarWidget({ events }: { events: CalendarEvent[] }) 
         <div className="flex items-center gap-2">
           <div className="w-[3px] h-4 rounded-full bg-brand shrink-0" />
           <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">
+          <span className="text-[10px] font-open font-bold uppercase tracking-widest text-muted-foreground">
             Economic Calendar
           </span>
         </div>
@@ -61,15 +61,15 @@ export function EconomicCalendarWidget({ events }: { events: CalendarEvent[] }) 
                   <div className="min-w-0">
                     {/* Country + importance badge */}
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="text-[10px] font-mono font-bold text-muted-foreground tracking-wider">
+                      <span className="text-[10px] font-open font-bold text-muted-foreground tracking-wider">
                         {item.country || 'GLB'}
                       </span>
-                      <span className={`text-[9px] px-1.5 py-0 rounded font-mono font-bold uppercase tracking-wide ${importanceBadge[imp] || ''}`}>
+                      <span className={`text-[9px] px-1.5 py-0 rounded font-open font-bold uppercase tracking-wide ${importanceBadge[imp] || ''}`}>
                         {imp}
                       </span>
                     </div>
                     {/* Event name in sans */}
-                    <span className="text-[12.5px] font-sans font-medium text-foreground leading-tight line-clamp-1">
+                    <span className="text-[12.5px] font-sans font-bold text-foreground leading-tight line-clamp-1">
                       {item.event}
                     </span>
                   </div>
@@ -77,10 +77,10 @@ export function EconomicCalendarWidget({ events }: { events: CalendarEvent[] }) 
 
                 {/* Date + time in mono */}
                 <div className="text-right shrink-0 pl-2">
-                  <div className="text-[11px] font-mono font-semibold text-foreground/80 tabular" suppressHydrationWarning>
+                  <div className="text-[11px] font-open font-bold text-foreground/80 tabular" suppressHydrationWarning>
                     {new Date(item.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </div>
-                  <div className="text-[10px] font-mono text-muted-foreground tabular" suppressHydrationWarning>
+                  <div className="text-[10px] font-open text-muted-foreground tabular" suppressHydrationWarning>
                     {new Date(item.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>

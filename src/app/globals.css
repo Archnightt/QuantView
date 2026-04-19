@@ -1,6 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 @layer base {
   :root {
@@ -108,6 +110,9 @@
   .font-sans {
     font-family: var(--font-sans), system-ui, sans-serif;
   }
+  .font-open {
+    font-family: 'Open Sans', sans-serif;
+  }
 }
 
 @layer utilities {
@@ -151,8 +156,9 @@
     to { width: 100%; }
   }
 
-  /* Tabular numbers for financial data */
+  /* Tabular numbers for financial data - Using Open Sans for numbers */
   .tabular {
+    font-family: 'Open Sans', sans-serif;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
   }

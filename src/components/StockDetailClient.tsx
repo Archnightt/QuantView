@@ -52,8 +52,8 @@ function timeAgo(ts: number) {
 function StatChip({ label, value }: { label: string; value: string }) {
     return (
         <div className="flex flex-col gap-0.5 shrink-0">
-            <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-muted-foreground/70">{label}</span>
-            <span className="text-[13px] font-mono font-semibold text-foreground tabular-nums">{value}</span>
+            <span className="text-[9px] font-open uppercase tracking-[0.12em] text-muted-foreground/70">{label}</span>
+            <span className="text-[13px] font-open font-bold text-foreground tabular-nums">{value}</span>
         </div>
     );
 }
@@ -63,7 +63,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex items-center gap-2 mb-4">
             <div className="w-[3px] h-4 rounded-full bg-brand" />
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">{children}</span>
+            <span className="text-[10px] font-open font-bold uppercase tracking-widest text-muted-foreground">{children}</span>
         </div>
     );
 }
@@ -83,7 +83,7 @@ function ToggleGroup({
                     key={opt.value}
                     onClick={() => onChange(opt.value)}
                     className={cn(
-                        "px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase tracking-wide transition-all",
+                        "px-2.5 py-1 rounded text-[10px] font-open font-bold uppercase tracking-wide transition-all",
                         value === opt.value
                             ? "bg-brand text-black"
                             : "text-muted-foreground hover:text-foreground"
@@ -385,7 +385,7 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                                     <Clock className="w-2.5 h-2.5" />{timeAgo(item.providerPublishTime)}
                                                 </span>
                                             </div>
-                                            <h3 className="text-[13px] font-sans font-medium text-foreground/90 group-hover:text-foreground transition-colors line-clamp-2 leading-snug">
+                                            <h3 className="text-[13px] font-sans font-bold text-foreground/90 group-hover:text-foreground transition-colors line-clamp-2 leading-snug">
                                                 {item.title}
                                             </h3>
                                         </div>
@@ -509,7 +509,7 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                     ].map(({ label, value }) => (
                                         <div key={label} className="flex items-center justify-between py-1.5 border-b border-border/40 last:border-0">
                                             <span className="text-[12px] font-sans text-muted-foreground">{label}</span>
-                                            <span className="text-[13px] font-mono font-semibold text-foreground tabular-nums">{value}</span>
+                                            <span className="text-[13px] font-mono font-bold text-foreground tabular-nums">{value}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -527,7 +527,7 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                     ].map(({ label, value }) => (
                                         <div key={label} className="flex items-center justify-between py-1.5 border-b border-border/40 last:border-0">
                                             <span className="text-[12px] font-sans text-muted-foreground">{label}</span>
-                                            <span className="text-[13px] font-mono font-semibold text-foreground tabular-nums">{value}</span>
+                                            <span className="text-[13px] font-mono font-bold text-foreground tabular-nums">{value}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -588,7 +588,7 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                                                 <div className={cn("w-1.5 h-1.5 rounded-full",
                                                     u.action === "up" ? "bg-emerald-500" : u.action === "down" ? "bg-red-500" : "bg-muted-foreground"
                                                 )} />
-                                                <span className="text-[13px] font-sans font-medium text-foreground">{u.firm}</span>
+                                                <span className="text-[13px] font-sans font-bold text-foreground">{u.firm}</span>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 {u.fromGrade && <span className="text-[11px] font-mono text-muted-foreground line-through">{u.fromGrade}</span>}

@@ -40,11 +40,11 @@ export function MarketSummaryWidget({ data }: { data: any }) {
               <span className="font-bold text-sm truncate">{item.shortName || item.symbol}</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold tabular-nums">
+              <span className="text-lg font-bold font-open tabular-nums">
                 {item.regularMarketPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
-            <span className={`text-xs font-medium ${isPos ? "text-emerald-500" : "text-rose-500"}`}>
+            <span className={`text-xs font-bold font-open tabular-nums ${isPos ? "text-emerald-500" : "text-rose-500"}`}>
               {isPos ? "+" : ""}{change.toFixed(2)}%
             </span>
           </div>
@@ -56,7 +56,7 @@ export function MarketSummaryWidget({ data }: { data: any }) {
   return (
     <Card className="h-[400px] flex flex-col dark:bg-card overflow-hidden">
       {/* Status Bar */}
-      <div className={`px-4 py-2 text-xs font-medium uppercase tracking-wider flex items-center justify-center gap-2 ${status.open ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800/50 text-zinc-400'}`}>
+      <div className={`px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 ${status.open ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800/50 text-zinc-400'}`}>
         {status.open ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
         {status.label}
       </div>

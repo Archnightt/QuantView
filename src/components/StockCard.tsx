@@ -112,7 +112,7 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
                   </div>
                 )}
                 {/* Ticker in monospace */}
-                <span className="font-mono text-base font-bold tracking-tight leading-none">
+                <span className="font-open text-base font-bold tracking-tight leading-none">
                   {stock.symbol}
                 </span>
                 {stock.isFeatured && (
@@ -127,7 +127,7 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
             {/* Change badge */}
             <Badge
               variant="outline"
-              className={`shrink-0 tabular px-2 py-1 text-xs font-mono font-semibold border-0 ${isPositive
+              className={`shrink-0 tabular px-2 py-1 text-xs font-open font-bold border-0 ${isPositive
                   ? 'bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/15 dark:text-emerald-400'
                   : 'bg-red-500/10 text-red-500 dark:bg-red-500/15 dark:text-red-400'
                 }`}

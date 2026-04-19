@@ -40,7 +40,7 @@ export function WorldIndicesWidget({ data }: { data: { america: any[], europe: a
     return (
         <Card className="h-[400px] flex flex-col shadow-sm dark:bg-card">
             <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
                     <Globe className="w-5 h-5 text-blue-500" />
                     World Indices
                 </CardTitle>
@@ -72,10 +72,10 @@ export function WorldIndicesWidget({ data }: { data: { america: any[], europe: a
                                     <span className="text-[10px] text-muted-foreground uppercase">{item.symbol}</span>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-sm font-mono font-bold tabular-nums">
+                                    <div className="text-sm font-open font-bold tabular-nums">
                                         {item.regularMarketPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </div>
-                                    <div className={`flex items-center justify-end gap-1 text-xs font-medium ${isPos ? "text-emerald-500" : "text-rose-500"}`}>
+                                    <div className={`flex items-center justify-end gap-1 text-xs font-open font-bold ${isPos ? "text-emerald-500" : "text-rose-500"}`}>
                                         {isPos ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                                         {isPos ? "+" : ""}{change.toFixed(2)}%
                                     </div>
