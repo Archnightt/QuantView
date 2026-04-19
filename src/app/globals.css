@@ -49,35 +49,35 @@
   }
 
   .dark {
-    /* --- Dark Mode (High Contrast Deep) --- */
-    --background: 222 20% 7%;
+    /* --- Dark Mode (Neutral Matte) --- */
+    --background: 0 0% 3.9%; /* rgb(10, 10, 10) */
     --foreground: 0 0% 98%;
     
-    --card: 222 18% 11%;
+    --card: 0 0% 9%;
     --card-foreground: 0 0% 98%;
     
-    --popover: 222 18% 11%;
+    --popover: 0 0% 9%;
     --popover-foreground: 0 0% 98%;
     
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 3.5%;
     
-    --secondary: 222 18% 16%;
+    --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 98%;
     
-    --muted: 222 18% 16%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 65%;
     
-    --accent: 222 18% 16%;
+    --accent: 0 0% 14%;
     --accent-foreground: 0 0% 98%;
     
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     
-    /* Distinct borders to prevent "melting" */
-    --border: 222 18% 18%;
-    --input: 222 18% 18%;
-    --ring: 240 4.9% 83.9%;
+    /* Slightly more visible borders for the matte finish */
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 84%;
     
     --chart-main: 142 70% 50%;
 
@@ -86,8 +86,8 @@
     --brand-foreground: 0 0% 4%;
 
     /* AI section background — slightly different from card */
-    --ai-bg: 224 22% 14%;
-    --narrative-bg: 224 26% 12%;
+    --ai-bg: 0 0% 11%;
+    --narrative-bg: 0 0% 8%;
   }
 }
 
