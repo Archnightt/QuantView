@@ -7,7 +7,7 @@ module.exports = {
 			fontFamily: {
 				sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
 				mono: ['var(--font-mono)', 'Courier New', 'monospace'],
-				display: ['var(--font-display)', 'Georgia', 'serif'],
+				display: ['var(--font-display)', 'sans-serif'],
 				open: ['"Open Sans"', 'sans-serif'],
 			},
 			borderRadius: {

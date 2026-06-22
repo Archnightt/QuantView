@@ -95,7 +95,7 @@ export function HeroChart({ symbol, name, initialData, className }: { symbol: st
           {/* Price & change in mono */}
           {lastPrice && (
             <div className="flex items-baseline gap-2 pt-0.5">
-              <span className="font-open font-bold text-3xl tabular">
+              <span className="font-open font-normal text-3xl tabular">
                 ${lastPrice.toFixed(2)}
               </span>
               <span className={`font-open text-sm font-bold tabular ${isPositiveChart ? 'text-emerald-500' : 'text-red-500'}`}>

@@ -40,7 +40,7 @@ export function MarketSummaryWidget({ data }: { data: any }) {
               <span className="font-bold text-sm truncate">{item.shortName || item.symbol}</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold font-open tabular-nums">
+              <span className="text-lg font-normal font-open tabular-nums">
                 {item.regularMarketPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>

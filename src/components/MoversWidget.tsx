@@ -42,7 +42,7 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
             </div>
             <div className="text-right shrink-0">
               {/* Price in display serif */}
-              <div className="font-open text-base leading-tight tabular text-foreground font-bold">
+              <div className="font-open text-base leading-tight tabular text-foreground font-normal">
                 ${item.regularMarketPrice?.toFixed(2)}
               </div>
               {/* % in mono */}

@@ -6,6 +6,7 @@ import type { Stock } from "@prisma/client";
 import type { ElementType, ReactNode } from "react";
 import { HomeNewsBrief, type HomeNewsStory } from "@/components/HomeNewsBrief";
 import { MarketIndices } from "@/components/MarketIndices";
+import { MarketStatusBadge } from "@/components/MarketStatusBadge";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { prisma } from "@/lib/prisma";
 import {
@@ -66,12 +67,14 @@ function formatPercent(value: number | null | undefined) {
 function SectionLabel({
   icon: Icon,
   children,
+  className,
 }: {
   icon: ElementType;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+    <div className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground ${className ?? "mb-4"}`}>
       <Icon className="h-3.5 w-3.5 text-brand" />
       {children}
     </div>
@@ -146,7 +149,7 @@ function WatchlistTable({ stocks }: { stocks: Stock[] }) {
 
   return (
     <div className="overflow-hidden rounded-lg border border-border/70 bg-card/70 shadow-sm backdrop-blur">
-      <div className="grid grid-cols-[1.2fr_0.7fr_0.5fr] border-b border-border/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[1.3fr_0.7fr_0.5fr_0.8fr]">
+      <div className="grid grid-cols-[1.2fr_0.7fr_0.5fr] border-b border-border/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[1fr_0.6fr_0.5fr_1.5fr]">
         <span>Name</span>
         <span className="text-right">Price</span>
         <span className="text-right">Move</span>
@@ -162,7 +165,7 @@ function WatchlistTable({ stocks }: { stocks: Stock[] }) {
             <Link
               href={`/stocks/${stock.symbol}`}
               key={stock.symbol}
-              className="grid grid-cols-[1.2fr_0.7fr_0.5fr] items-center gap-3 px-4 py-4 transition-colors hover:bg-secondary/35 md:grid-cols-[1.3fr_0.7fr_0.5fr_0.8fr]"
+              className="grid grid-cols-[1.2fr_0.7fr_0.5fr] items-center gap-3 px-4 py-4 transition-colors hover:bg-secondary/35 md:grid-cols-[1fr_0.6fr_0.5fr_1.5fr]"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-3">
@@ -192,7 +195,7 @@ function WatchlistTable({ stocks }: { stocks: Stock[] }) {
                 </div>
               </div>
 
-              <div className="text-right font-open text-sm font-bold tabular">
+              <div className="text-right font-open text-sm font-normal tabular">
                 {formatCurrency(stock.price, stock.currency || "$")}
               </div>
 
@@ -231,7 +234,7 @@ function QuoteList({ title, quotes }: { title: string; quotes: MarketQuote[] }) 
                 <p className="text-xs text-muted-foreground">{quote.symbol}</p>
               </div>
               <div className="shrink-0 text-right">
-                <p className="text-sm font-bold tabular">{formatNumber(quote.regularMarketPrice)}</p>
+                <p className="text-sm font-normal tabular">{formatNumber(quote.regularMarketPrice)}</p>
                 <p className={`text-xs font-bold tabular ${isPositive ? "text-emerald-500" : "text-red-500"}`}>
                   {formatPercent(change)}
                 </p>
@@ -330,16 +333,9 @@ export default async function DashboardPage() {
     <div className="home-dashboard-shell min-h-[calc(100vh-60px)]">
       <main className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8">
         <section className="space-y-4 border-b border-border/70 pb-8">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <SectionLabel icon={Landmark}>Market indices</SectionLabel>
-              <h1 className="font-display text-4xl font-semibold leading-tight md:text-5xl">
-                Market open
-              </h1>
-            </div>
-            <p className="max-w-md text-sm leading-6 text-muted-foreground">
-              The baseline read before watchlist, headlines, and cross-asset context.
-            </p>
+          <div className="mb-4 flex items-center justify-between">
+            <SectionLabel icon={Landmark} className="mb-0">Market indices</SectionLabel>
+            <MarketStatusBadge />
           </div>
           <MarketIndices />
         </section>

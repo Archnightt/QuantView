@@ -72,7 +72,7 @@ export function WorldIndicesWidget({ data }: { data: { america: any[], europe: a
                                     <span className="text-[10px] text-muted-foreground uppercase">{item.symbol}</span>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-sm font-open font-bold tabular-nums">
+                                    <div className="text-sm font-open font-normal tabular-nums">
                                         {item.regularMarketPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </div>
                                     <div className={`flex items-center justify-end gap-1 text-xs font-open font-bold ${isPos ? "text-emerald-500" : "text-rose-500"}`}>

@@ -169,7 +169,7 @@ function CompareToSection({ symbol, stockDetails, peers }: { symbol: string; sto
                     <p className="text-[13px] font-mono font-bold text-foreground mb-0.5">{symbol}</p>
                     <p className="text-[10px] font-sans text-muted-foreground line-clamp-1 mb-3">{stockDetails.name}</p>
                     <div className="flex items-baseline gap-1.5 mb-2">
-                        <span className="text-[15px] font-mono font-bold text-foreground tabular-nums">{stockDetails.price?.toFixed(2)}</span>
+                        <span className="text-[15px] font-mono font-normal text-foreground tabular-nums">{stockDetails.price?.toFixed(2)}</span>
                         <span className={cn("text-[11px] font-mono font-bold", (stockDetails.change ?? 0) >= 0 ? "text-emerald-500" : "text-red-500")}>
                             {(stockDetails.change ?? 0) > 0 ? "+" : ""}{(stockDetails.change ?? 0).toFixed(2)}%
                         </span>
@@ -198,7 +198,7 @@ function CompareToSection({ symbol, stockDetails, peers }: { symbol: string; sto
                         <p className="text-[13px] font-mono font-bold text-foreground mb-0.5">{peer.symbol}</p>
                         <p className="text-[10px] font-sans text-muted-foreground line-clamp-1 mb-3">{peer.name}</p>
                         <div className="flex items-baseline gap-1.5 mb-2">
-                            <span className="text-[15px] font-mono font-bold text-foreground tabular-nums">{peer.price?.toFixed(2)}</span>
+                            <span className="text-[15px] font-mono font-normal text-foreground tabular-nums">{peer.price?.toFixed(2)}</span>
                             <span className={cn("text-[11px] font-mono font-bold", (peer.change ?? 0) >= 0 ? "text-emerald-500" : "text-red-500")}>
                                 {(peer.change ?? 0) > 0 ? "+" : ""}{(peer.change ?? 0).toFixed(2)}%
                             </span>
@@ -313,7 +313,7 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="text-[36px] font-mono font-bold text-foreground leading-none tabular-nums">{currency}{price.toFixed(2)}</div>
+                        <div className="text-[36px] font-mono font-normal text-foreground leading-none tabular-nums">{currency}{price.toFixed(2)}</div>
                         <div className={cn(
                             "inline-flex items-center gap-1.5 mt-1.5 px-3 py-1.5 rounded-full text-[13px] font-mono font-bold",
                             isPositive
