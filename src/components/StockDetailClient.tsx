@@ -284,7 +284,7 @@ export function StockDetailClient({ stockDetails, stockIngest, stockHistory, pee
     ] as const;
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-[calc(100vh-60px)]">
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6">
 
                 {/* Back */}

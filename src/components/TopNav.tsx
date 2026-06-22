@@ -1,20 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
+    BarChart3,
     LayoutDashboard,
-    Newspaper,
-    LineChart,
     Moon,
+    Newspaper,
     Sun,
+    Search,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { useTheme } from "next-themes";
-import { useState, useEffect } from "react";
-import { StockSearch } from "@/components/StockSearch";
+import { StockSearch } from "./StockSearch";
 
 const routes = [
     {
@@ -23,13 +23,13 @@ const routes = [
         href: "/",
     },
     {
-        label: "Market News",
+        label: "News",
         icon: Newspaper,
         href: "/news",
     },
     {
         label: "Analysis",
-        icon: LineChart,
+        icon: BarChart3,
         href: "/analysis",
     },
 ];
@@ -37,88 +37,99 @@ const routes = [
 export function TopNav() {
     const pathname = usePathname();
     const { resolvedTheme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    const logoSrc = mounted && resolvedTheme === "dark" ? "/dark-logo.webp" : "/logo.webp";
+    const isDark = resolvedTheme === "dark";
 
     return (
-        <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-border/60"
-            style={{ borderBottom: '1px solid hsl(var(--border) / 0.6)', boxShadow: '0 1px 0 0 hsl(var(--brand) / 0.35), 0 2px 12px 0 rgb(0 0 0 / 0.12)' }}>
-            {/* Brand accent line at the very top */}
-            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--brand)) 0%, hsl(var(--brand) / 0.3) 60%, transparent 100%)' }} />
-
-            <div className="max-w-[98%] mx-auto px-4 h-[60px] flex items-center justify-between gap-4">
-
-                {/* Left: Logo & Navigation */}
-                <div className="flex items-center gap-8">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group shrink-0">
-                        <div className="relative w-36 h-9">
-                            {mounted && (
-                                <Image
-                                    fill
-                                    alt="QuantView Logo"
-                                    src={logoSrc}
-                                    className="object-contain"
-                                    priority
-                                />
-                            )}
-                        </div>
+        <>
+            {/* Static Header (Absolute so it scrolls away) */}
+            <div className="absolute left-0 right-0 top-6 z-40 pointer-events-none">
+                <div className="mx-auto flex h-12 max-w-[1440px] items-center justify-between px-4 md:px-8">
+                    <Link
+                        href="/"
+                        className="group flex min-w-0 items-center gap-3 transition-opacity hover:opacity-80 pointer-events-auto"
+                        aria-label="QuantView dashboard"
+                    >
+                        <Image
+                            src="/dark-alt-logo.webp"
+                            alt="QuantView"
+                            width={32}
+                            height={32}
+                            className="hidden dark:block h-8 w-8 shrink-0 object-contain"
+                        />
+                        <Image
+                            src="/alt-logo.webp"
+                            alt="QuantView"
+                            width={32}
+                            height={32}
+                            className="block dark:hidden h-8 w-8 shrink-0 object-contain"
+                        />
+                        <span className="hidden min-w-0 sm:block">
+                            <span className="block text-sm font-bold leading-none tracking-tight text-foreground">
+                                QuantView
+                            </span>
+                            <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                                Market desk
+                            </span>
+                        </span>
                     </Link>
 
-                    {/* Nav Links */}
-                    <div className="hidden md:flex items-center gap-0.5">
+                    <button
+                        onClick={() => setTheme(isDark ? "light" : "dark")}
+                        className="relative flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-full transition-all duration-300 bg-[#e5e5e5] shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] dark:bg-[#2a2a2b] dark:shadow-none pointer-events-auto"
+                        title="Toggle theme"
+                        aria-label="Toggle theme"
+                    >
+                        <div
+                            className="absolute left-[2px] top-[2px] z-10 h-6 w-6 rounded-full transition-transform duration-300 translate-x-7 bg-[#333333] shadow-md dark:translate-x-0 dark:bg-white dark:shadow-sm"
+                        />
+                        <div className="relative flex w-full items-center justify-between px-1.5">
+                            <Sun className="h-3.5 w-3.5 transition-opacity duration-300 text-[#333333] opacity-100 dark:opacity-0" strokeWidth={2.5} />
+                            <Moon className="h-3.5 w-3.5 transition-opacity duration-300 opacity-0 dark:text-white dark:opacity-100" strokeWidth={2.5} />
+                        </div>
+                        <span className="sr-only">Toggle theme</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Floating Navigation Pill */}
+            <div className="sticky top-6 z-50 mt-6 mb-1 flex h-12 w-full items-center justify-center px-4 pointer-events-none">
+                <div className="pointer-events-auto flex items-center justify-center p-1.5 gap-2 rounded-full border border-border/70 bg-card/70 shadow-sm shadow-black/5 backdrop-blur-xl dark:bg-card/62 dark:shadow-black/20">
+                    <nav className="flex items-center justify-center gap-1">
                         {routes.map((route) => {
                             const isActive = pathname === route.href;
+
                             return (
                                 <Link
                                     key={route.href}
                                     href={route.href}
                                     className={cn(
-                                        "flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13px] font-medium tracking-tight transition-all duration-200",
+                                        "inline-flex h-9 shrink-0 items-center gap-2 rounded-full px-3.5 text-xs font-bold transition-colors",
                                         isActive
-                                            ? "bg-brand/10 text-brand dark:text-brand border border-brand/20"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                                            ? "bg-foreground text-background shadow-sm"
+                                            : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                                     )}
                                 >
-                                    <route.icon className="h-3.5 w-3.5 shrink-0" />
-                                    {route.label}
+                                    <route.icon className="h-3.5 w-3.5" />
+                                    <span>{route.label}</span>
                                 </Link>
                             );
                         })}
-                    </div>
-                </div>
+                    </nav>
 
-                {/* Right: Search / Settings */}
-                <div className="flex items-center gap-3 flex-1 justify-end max-w-2xl">
-                    {/* Wider Bloomberg-style search */}
-                    <div className="flex-1 hidden sm:block max-w-lg">
-                        <StockSearch />
-                    </div>
-
-                    {/* Minimal theme cycle button */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                            if (resolvedTheme === "dark") setTheme("light");
-                            else setTheme("dark");
-                        }}
-                        className="shrink-0 h-9 w-9 rounded-full border border-border/60 bg-secondary/40 hover:bg-secondary hover:border-brand/30 text-muted-foreground hover:text-foreground transition-all"
-                        title="Toggle theme"
-                    >
-                        {mounted && (
-                            resolvedTheme === "dark"
-                                ? <Sun className="h-4 w-4" />
-                                : <Moon className="h-4 w-4" />
+                    <StockSearch
+                        enableShortcut={false}
+                        customTrigger={(open) => (
+                            <button
+                                onClick={open}
+                                aria-label="Search"
+                                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700 ml-1.5"
+                            >
+                                <Search className="h-4 w-4 text-foreground" />
+                            </button>
                         )}
-                    </Button>
+                    />
                 </div>
             </div>
-        </nav>
+        </>
     );
 }

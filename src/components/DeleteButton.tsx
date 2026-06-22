@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { Loader2, Trash2 } from "lucide-react";
 
 export function DeleteButton({ symbol }: { symbol: string }) {
 	const [isLoading, setIsLoading] = useState(false);
@@ -31,13 +31,14 @@ export function DeleteButton({ symbol }: { symbol: string }) {
 		<button
 			onClick={handleDelete}
 			disabled={isLoading}
-			className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+			className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-500 disabled:pointer-events-none disabled:opacity-60"
 			title="Remove from watchlist"
+			aria-label={`Remove ${symbol} from watchlist`}
 		>
 			{isLoading ? (
-				<div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+				<Loader2 className="h-4 w-4 animate-spin" />
 			) : (
-				<TrashIcon className="w-4 h-4" />
+				<Trash2 className="h-4 w-4" />
 			)}
 		</button>
 	);

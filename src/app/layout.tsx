@@ -46,7 +46,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen bg-background flex flex-col">
+          <div className="home-dashboard-shell min-h-screen flex flex-col">
             <TopNav />
             <MainContentWrapper>
               {children}

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, Loader2, TrendingUp, Building2 } from "lucide-react";
+import { Search, Loader2, TrendingUp } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -23,7 +23,15 @@ interface SearchResult {
   typeDisp?: string;
 }
 
-export function StockSearch() {
+export function StockSearch({
+  enableShortcut = true,
+  triggerLabel = "Search markets, companies, or symbols...",
+  customTrigger,
+}: {
+  enableShortcut?: boolean;
+  triggerLabel?: string;
+  customTrigger?: (open: () => void) => React.ReactNode;
+} = {}) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<SearchResult[]>([]);
@@ -33,6 +41,8 @@ export function StockSearch() {
 
   // Toggle with Cmd+K
   React.useEffect(() => {
+    if (!enableShortcut) return;
+
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -41,7 +51,7 @@ export function StockSearch() {
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [enableShortcut]);
 
   // Debounced Search Effect
   React.useEffect(() => {
@@ -54,8 +64,11 @@ export function StockSearch() {
       setLoading(true);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        setResults(data.filter((item: any) => item.symbol));
+        const data: unknown = await res.json();
+        const searchResults = Array.isArray(data) ? data : [];
+        setResults(searchResults.filter((item): item is SearchResult => {
+          return Boolean(item && typeof item === "object" && "symbol" in item);
+        }));
       } catch (error) {
         console.error(error);
       } finally {
@@ -96,12 +109,13 @@ export function StockSearch() {
         description: `Successfully added ${symbol} to your watchlist.`,
       });
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to add stock", error);
+      const message = error instanceof Error ? error.message : "Could not add stock. Please try again.";
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Could not add stock. Please try again.",
+        description: message,
       });
     } finally {
       setLoading(false);
@@ -121,16 +135,20 @@ export function StockSearch() {
   return (
     <>
       {/* Sleek Search Trigger */}
-      <button
-        onClick={() => setOpen(true)}
-        className="group relative flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted-foreground bg-card border border-border/40 rounded-full shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 w-full"
-      >
-        <Search className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-        <span className="flex-1 text-left truncate">Search markets, companies, or symbols...</span>
-        <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-          <span className="text-xs">⌘</span>K
-        </kbd>
-      </button>
+      {customTrigger ? (
+        customTrigger(() => setOpen(true))
+      ) : (
+        <button
+          onClick={() => setOpen(true)}
+          className="group relative flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted-foreground bg-card border border-border/40 rounded-full shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 w-full"
+        >
+          <Search className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="flex-1 text-left truncate">{triggerLabel}</span>
+          {enableShortcut ? <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+            <span className="text-xs">⌘</span>K
+          </kbd> : null}
+        </button>
+      )}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <DialogTitle className="sr-only">Search Stocks</DialogTitle>
@@ -150,7 +168,7 @@ export function StockSearch() {
 
           {!loading && results.length === 0 && query && (
             <CommandEmpty className="py-6 text-center text-muted-foreground">
-              No results found for "{query}".
+              No results found for &quot;{query}&quot;.
             </CommandEmpty>
           )}
 

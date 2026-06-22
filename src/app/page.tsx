@@ -6,7 +6,8 @@ import type { Stock } from "@prisma/client";
 import type { ElementType, ReactNode } from "react";
 import { HomeNewsBrief, type HomeNewsStory } from "@/components/HomeNewsBrief";
 import { MarketIndices } from "@/components/MarketIndices";
-import { MarketStatusBadge } from "@/components/MarketStatusBadge";
+import { DeleteButton } from "@/components/DeleteButton";
+import { StockSearch } from "@/components/StockSearch";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { prisma } from "@/lib/prisma";
 import {
@@ -15,7 +16,6 @@ import {
   CalendarClock,
   CircleDollarSign,
   Globe2,
-  Landmark,
   Newspaper,
 } from "lucide-react";
 
@@ -139,77 +139,95 @@ function MetricStrip({
 }
 
 function WatchlistTable({ stocks }: { stocks: Stock[] }) {
-  if (stocks.length === 0) {
-    return (
-      <div className="rounded-lg border border-dashed border-border/70 bg-card/55 px-6 py-12 text-center text-sm text-muted-foreground">
-        No stocks tracked yet. Search from the top bar to build your desk.
-      </div>
-    );
-  }
-
   return (
     <div className="overflow-hidden rounded-lg border border-border/70 bg-card/70 shadow-sm backdrop-blur">
-      <div className="grid grid-cols-[1fr_0.5fr_0.5fr] border-b border-border/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[0.8fr_0.4fr_0.4fr_2fr]">
-        <span>Name</span>
-        <span className="text-right">Price</span>
-        <span className="text-right">Move</span>
-        <span className="hidden text-left pl-4 md:block">Signal</span>
+      <div className="grid gap-4 border-b border-border/70 p-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Manage watchlist</p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            Search to add or remove a symbol directly from the table.
+          </p>
+        </div>
+        <StockSearch
+          enableShortcut={false}
+          triggerLabel="Search ticker to add to watchlist..."
+        />
       </div>
 
-      <div className="divide-y divide-border/60">
-        {stocks.slice(0, 10).map((stock) => {
-          const isPositive = Number(stock.change) >= 0;
-          const narrative = stock.narrative?.replaceAll("\"", "") || "No current note.";
+      {stocks.length === 0 ? (
+        <div className="px-6 py-12 text-center text-sm text-muted-foreground">
+          No stocks tracked yet. Use the search above to build your desk.
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-[1fr_0.5fr_0.5fr_36px] border-b border-border/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[0.8fr_0.4fr_0.4fr_2fr_36px]">
+            <span>Name</span>
+            <span className="text-right">Price</span>
+            <span className="text-right">Move</span>
+            <span className="hidden text-left pl-4 md:block">Signal</span>
+            <span className="sr-only">Actions</span>
+          </div>
 
-          return (
-            <Link
-              href={`/stocks/${stock.symbol}`}
-              key={stock.symbol}
-              className="grid grid-cols-[1fr_0.5fr_0.5fr] items-center gap-3 px-4 py-4 transition-colors hover:bg-secondary/35 md:grid-cols-[0.8fr_0.4fr_0.4fr_2fr]"
-            >
-              <div className="min-w-0">
-                <div className="flex items-center gap-3">
-                  {stock.imageUrl ? (
-                    <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border bg-white">
-                      <Image
-                        src={stock.imageUrl}
-                        alt=""
-                        fill
-                        className="object-contain p-1"
-                        sizes="32px"
-                      />
-                    </span>
-                  ) : (
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-xs font-bold">
-                      {stock.symbol.slice(0, 1)}
-                    </span>
-                  )}
-                  <span className="min-w-0">
-                    <span className="block font-open text-sm font-bold tracking-tight text-foreground">
-                      {stock.symbol}
-                    </span>
-                    <span className="block truncate text-xs text-muted-foreground">
-                      {stock.name}
-                    </span>
-                  </span>
+          <div className="divide-y divide-border/60">
+            {stocks.slice(0, 10).map((stock) => {
+              const isPositive = Number(stock.change) >= 0;
+              const narrative = stock.narrative?.replaceAll("\"", "") || "No current note.";
+
+              return (
+                <div
+                  key={stock.symbol}
+                  className="grid grid-cols-[1fr_0.5fr_0.5fr_36px] items-center gap-3 px-4 py-4 transition-colors hover:bg-secondary/35 md:grid-cols-[0.8fr_0.4fr_0.4fr_2fr_36px]"
+                >
+                  <Link href={`/stocks/${stock.symbol}`} className="contents">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-3">
+                        {stock.imageUrl ? (
+                          <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border bg-white">
+                            <Image
+                              src={stock.imageUrl}
+                              alt=""
+                              fill
+                              className="object-contain p-1"
+                              sizes="32px"
+                            />
+                          </span>
+                        ) : (
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-xs font-bold">
+                            {stock.symbol.slice(0, 1)}
+                          </span>
+                        )}
+                        <span className="min-w-0">
+                          <span className="block font-open text-sm font-bold tracking-tight text-foreground">
+                            {stock.symbol}
+                          </span>
+                          <span className="block truncate text-xs text-muted-foreground">
+                            {stock.name}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-right font-open text-sm font-normal tabular">
+                      {formatCurrency(stock.price, stock.currency || "$")}
+                    </div>
+
+                    <div className={`text-right text-xs font-bold tabular ${isPositive ? "text-emerald-500" : "text-red-500"}`}>
+                      {formatPercent(stock.change)}
+                    </div>
+
+                    <p className="hidden truncate text-left pl-4 text-xs leading-5 text-muted-foreground md:block">
+                      {narrative}
+                    </p>
+                  </Link>
+                  <div className="flex justify-end">
+                    <DeleteButton symbol={stock.symbol} />
+                  </div>
                 </div>
-              </div>
-
-              <div className="text-right font-open text-sm font-normal tabular">
-                {formatCurrency(stock.price, stock.currency || "$")}
-              </div>
-
-              <div className={`text-right text-xs font-bold tabular ${isPositive ? "text-emerald-500" : "text-red-500"}`}>
-                {formatPercent(stock.change)}
-              </div>
-
-              <p className="hidden truncate text-left pl-4 text-xs leading-5 text-muted-foreground md:block">
-                {narrative}
-              </p>
-            </Link>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -330,13 +348,9 @@ export default async function DashboardPage() {
   )[0];
 
   return (
-    <div className="home-dashboard-shell min-h-[calc(100vh-60px)]">
+    <div className="min-h-[calc(100vh-60px)]">
       <main className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8">
         <section className="space-y-4 border-b border-border/70 pb-8">
-          <div className="mb-4 flex items-center justify-between">
-            <SectionLabel icon={Landmark} className="mb-0">Market indices</SectionLabel>
-            <MarketStatusBadge />
-          </div>
           <MarketIndices />
         </section>
 

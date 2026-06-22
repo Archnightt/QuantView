@@ -26,7 +26,7 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
 
   if (!stockDetails || !stockIngest) {
     return (
-      <div className="min-h-screen bg-[#0c0d0f] flex items-center justify-center">
+      <div className="min-h-[calc(100vh-60px)] flex items-center justify-center">
         <div className="text-center">
           <p className="text-[32px] font-mono font-bold text-white mb-2">{upperSymbol}</p>
           <p className="text-zinc-500 font-sans">Stock not found or data unavailable.</p>
