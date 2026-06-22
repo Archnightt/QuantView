@@ -149,11 +149,11 @@ function WatchlistTable({ stocks }: { stocks: Stock[] }) {
 
   return (
     <div className="overflow-hidden rounded-lg border border-border/70 bg-card/70 shadow-sm backdrop-blur">
-      <div className="grid grid-cols-[1.2fr_0.7fr_0.5fr] border-b border-border/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[1fr_0.6fr_0.5fr_1.5fr]">
+      <div className="grid grid-cols-[1fr_0.5fr_0.5fr] border-b border-border/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[0.8fr_0.4fr_0.4fr_2fr]">
         <span>Name</span>
         <span className="text-right">Price</span>
         <span className="text-right">Move</span>
-        <span className="hidden text-right md:block">Signal</span>
+        <span className="hidden text-left pl-4 md:block">Signal</span>
       </div>
 
       <div className="divide-y divide-border/60">
@@ -165,7 +165,7 @@ function WatchlistTable({ stocks }: { stocks: Stock[] }) {
             <Link
               href={`/stocks/${stock.symbol}`}
               key={stock.symbol}
-              className="grid grid-cols-[1.2fr_0.7fr_0.5fr] items-center gap-3 px-4 py-4 transition-colors hover:bg-secondary/35 md:grid-cols-[1fr_0.6fr_0.5fr_1.5fr]"
+              className="grid grid-cols-[1fr_0.5fr_0.5fr] items-center gap-3 px-4 py-4 transition-colors hover:bg-secondary/35 md:grid-cols-[0.8fr_0.4fr_0.4fr_2fr]"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ function WatchlistTable({ stocks }: { stocks: Stock[] }) {
                 {formatPercent(stock.change)}
               </div>
 
-              <p className="hidden truncate text-right text-xs leading-5 text-muted-foreground md:block">
+              <p className="hidden truncate text-left pl-4 text-xs leading-5 text-muted-foreground md:block">
                 {narrative}
               </p>
             </Link>
