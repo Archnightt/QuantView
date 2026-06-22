@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, DM_Serif_Display } from "next/font/google";
+import { Instrument_Sans, JetBrains_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { MainContentWrapper } from "@/components/MainContentWrapper";
 import { TopNav } from "@/components/TopNav";
 
-const inter = Inter({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
@@ -18,9 +18,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const dmSerifDisplay = DM_Serif_Display({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${jetbrainsMono.variable} ${dmSerifDisplay.variable} font-sans`}>
+      <body className={`${instrumentSans.variable} ${jetbrainsMono.variable} ${newsreader.variable} font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
