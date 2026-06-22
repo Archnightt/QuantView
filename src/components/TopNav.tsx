@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -38,6 +39,31 @@ export function TopNav() {
     const pathname = usePathname();
     const { resolvedTheme, setTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
+
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            
+            // Only apply hide logic if we've scrolled past the initial sticky threshold (e.g. 50px)
+            if (currentScrollY > 50) {
+                if (currentScrollY > lastScrollY) {
+                    setIsVisible(false); // scrolling down
+                } else {
+                    setIsVisible(true);  // scrolling up
+                }
+            } else {
+                setIsVisible(true); // always show at the very top
+            }
+            
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [lastScrollY]);
 
     return (
         <>
@@ -92,7 +118,10 @@ export function TopNav() {
             </div>
 
             {/* Floating Navigation Pill */}
-            <div className="sticky top-6 z-50 mt-6 mb-1 flex h-12 w-full items-center justify-center px-4 pointer-events-none">
+            <div className={cn(
+                "sticky top-6 z-50 mt-6 mb-1 flex h-12 w-full items-center justify-center px-4 pointer-events-none transition-all duration-300 ease-in-out",
+                isVisible ? "translate-y-0 opacity-100" : "-translate-y-24 opacity-0"
+            )}>
                 <div className="pointer-events-auto flex items-center justify-center p-1.5 gap-2 rounded-full border border-border/70 bg-card/70 shadow-sm shadow-black/5 backdrop-blur-xl dark:bg-card/62 dark:shadow-black/20">
                     <nav className="flex items-center justify-center gap-1">
                         {routes.map((route) => {
