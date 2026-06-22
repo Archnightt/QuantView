@@ -133,8 +133,8 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
             variant={activeCategory === cat.id ? "default" : "outline"}
             onClick={() => changeCategory(cat.id)}
             className={`rounded-full whitespace-nowrap px-5 text-[11px] font-mono font-semibold tracking-wide transition-all ${activeCategory === cat.id
-                ? "bg-brand text-brand-foreground hover:bg-brand/90 border-transparent"
-                : "bg-secondary/40 hover:bg-secondary border-border/50 text-muted-foreground"
+                ? "bg-brand text-white hover:bg-brand/90 border-transparent"
+                : "bg-secondary/40 hover:bg-secondary border-border/50 text-black dark:text-muted-foreground"
               }`}
           >
             {cat.label}

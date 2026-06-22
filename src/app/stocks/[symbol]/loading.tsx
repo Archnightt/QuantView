@@ -1,8 +1,9 @@
 export default function StockLoading() {
   return (
-    <div className="min-h-screen bg-[#0c0d0f] p-4 md:p-8 max-w-7xl mx-auto animate-pulse">
-      {/* Back link */}
-      <div className="w-36 h-4 bg-white/5 rounded mb-8" />
+    <div className="min-h-[calc(100vh-60px)] animate-pulse">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6">
+        {/* Back link */}
+        <div className="w-36 h-4 bg-white/5 rounded mb-8" />
 
       {/* Hero */}
       <div className="flex justify-between items-start mb-6">
@@ -42,10 +43,11 @@ export default function StockLoading() {
       </div>
 
       {/* Content skeletons */}
-      <div className="space-y-3">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-20 bg-white/3 rounded-xl border border-white/5" />
-        ))}
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-20 bg-white/3 rounded-xl border border-white/5" />
+          ))}
+        </div>
       </div>
     </div>
   );
